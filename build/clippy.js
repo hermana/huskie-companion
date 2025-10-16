@@ -340,12 +340,18 @@ clippy.Agent.prototype = {
         this._el.on('mousedown', $.proxy(this._onMouseDown, this));
 
         this._el.on('dblclick', $.proxy(this._onDoubleClick, this));
+
+        this._el.on('click', $.proxy(this._onClick, this));
     },
 
     _onDoubleClick:function () {
         if (!this.play('ClickedOn')) {
             this.animate();
         }
+    },
+
+    _onClick:function () {
+        this.speak("This is where the interactive window will go!");
     },
 
     reposition:function () {
