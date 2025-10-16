@@ -594,12 +594,6 @@ clippy.Animator.prototype = {
         return this._currentFrameIndex + 1;
     },
 
-    _playSound:function () {
-        var s = this._currentFrame.sound;
-        if (!s) return;
-        var audio = this._sounds[s];
-        if (audio) audio.play();
-    },
 
     _atLastFrame:function () {
         return this._currentFrameIndex >= this._currentAnimation.frames.length - 1;
@@ -617,7 +611,6 @@ clippy.Animator.prototype = {
         }
 
         this._draw();
-        this._playSound();
 
         this._loop = window.setTimeout($.proxy(this._step, this), this._currentFrame.duration);
 
@@ -844,7 +837,9 @@ clippy.Balloon.prototype = {
 
 };
 
-clippy.BASE_PATH = '//s3.amazonaws.com/clippy.js/Agents/';
+// clippy.BASE_PATH = '//s3.amazonaws.com/clippy.js/Agents/';
+
+clippy.BASE_PATH = "../huskie-companion/agents/";
 
 clippy.load = function (name, successCb, failCb) {
     var path = clippy.BASE_PATH + name;

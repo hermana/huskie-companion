@@ -5,6 +5,10 @@ Read more about the project on [our homepage](http://smore.com/clippy-js).
 
 
 Usage: Setup
+-----------
+
+To productionalize the plugin, you may need to update the BASE_PATH in clippy.js 
+
 ------------
 Add this code to you to your page to enable Clippy.js.
 
