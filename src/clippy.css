@@ -4,6 +4,7 @@
     cursor: pointer;
 }
 
+
 .clippy-balloon {
 
     background: #FFC;
@@ -15,10 +16,11 @@
 }
 
 .clippy-content {
-    max-width: 200px;
+    max-width: 1000px;
     min-width: 120px;
     font-family: "Microsoft Sans", sans-serif;
     font-size: 10pt;
+    position:fixed;
 }
 
 .clippy-tip {

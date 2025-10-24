@@ -181,6 +181,11 @@ clippy.Agent.prototype = {
         }, this);
     },
 
+    openGame:function () {
+        this._addToQueue(function () {
+            this._balloon.openGame();
+        }, this);
+    },
 
     /***
      * Close the current balloon
@@ -351,7 +356,8 @@ clippy.Agent.prototype = {
     },
 
     _onClick:function () {
-        this.speak("This is where the interactive window will go!");
+       // this.speak("This is where the interactive window will go!");
+       this.openGame();
     },
 
     reposition:function () {
@@ -663,15 +669,44 @@ clippy.Balloon = function (targetEl) {
 
 clippy.Balloon.prototype = {
 
-    WORD_SPEAK_TIME:320,
-    CLOSE_BALLOON_DELAY:2000,
+   WORD_SPEAK_TIME:320,
+   // CLOSE_BALLOON_DELAY:2000,
+   CLOSE_BALLOON_DELAY:5000000, //For debugging for now, but will also need to be longer.
 
     _setup:function () {
 
-        this._balloon = $('<div class="clippy-balloon"><div class="clippy-tip"></div><div class="clippy-content"></div></div> ').hide();
+        //this._balloon = $('<div class="clippy-balloon"><div class="clippy-tip"></div><div class="clippy-content"></div></div> ').hide();
+        this._balloon = this._getGameContent();
         this._content = this._balloon.find('.clippy-content');
 
         $(document.body).append(this._balloon);
+    },
+
+    _getGameContent:function () {
+        return $(`
+        <div class="clippy-balloon">
+        <div class="clippy-tip">
+        <div class="clippy-content">
+<section id="home" style="position:absolute;">
+        <h2 style="margin-top:1rem">Latest Questions</h2>
+
+        <!-- Thread 1 Card -->
+        <div class="card thread">
+          <div class="votes"><div><strong>12</strong><div class="meta">votes</div></div></div>
+          <div>
+            <h3 style="margin:0"><a href="#t-center-div">How do I center a &lt;div&gt; horizontally and vertically?</a></h3>
+            <div class="meta">asked by <strong>codedaisy</strong> • 3 replies • in <a href="#cat-web">Web Dev</a></div>
+            <div class="tags">
+              <span class="tag">css</span>
+              <span class="tag">layout</span>
+              <span class="tag">flexbox</span>
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        `);
     },
 
     reposition:function () {
@@ -729,7 +764,12 @@ clippy.Balloon.prototype = {
         }
 
         this._balloon.css({top:top, left:left});
+        this._content.css({top:top, left:left});
         this._balloon.addClass('clippy-' + side);
+        // FIXME: add consts or have them be able to change the size
+        this._balloon.width(500);
+        this._balloon.height(500);
+
     },
 
     _isOut:function () {
@@ -750,6 +790,20 @@ clippy.Balloon.prototype = {
 
         return false;
     },
+
+    openGame:function (){
+        this._hidden = false;
+        this.show();
+        var c = this._content;
+        // set height to auto
+        c.height(500);
+        c.width(500);
+        c.height(c.height());
+        c.width(c.width());
+        this.reposition();
+        //this._complete = true;
+    },
+
 
     speak:function (complete, text, hold) {
         this._hidden = false;

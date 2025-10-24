@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Forum</title>
+  <meta name="description" content="A minimal static forum mockup with a few example questions and replies." />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1f2937; /* slate-800 */
+      --muted: #6b7280; /* slate-500 */
+      --card: #f8fafc; /* slate-50 */
+      --line: #e5e7eb; /* slate-200 */
+      --accent: #4f46e5; /* indigo-600 */
+      --accent-contrast: #ffffff;
+      --tag: #eef2ff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1020;
+        --fg: #e5e7eb;
+        --muted: #9aa3b2;
+        --card: #0f172a;
+        --line: #1f2937;
+        --accent: #8b5cf6;
+        --accent-contrast: #0b1020;
+        --tag: #1e1b4b;
+      }
+    }
+
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--fg);
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar { display: flex; align-items: center; gap: 1rem; padding: .75rem 0; }
+    .logo { font-weight: 800; letter-spacing: .5px; }
+    .search { flex: 1; }
+    .search input {
+      width: 100%; padding: .6rem .8rem; border: 1px solid var(--line); border-radius: .6rem; background: var(--card); color: var(--fg);
+    }
+
+    nav { padding: .5rem 0; }
+    .tabs { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .tab { padding: .4rem .7rem; border: 1px solid var(--line); border-radius: 999px; background: var(--card); font-size: .9rem; }
+    .tab[aria-current="page"] { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+
+    .grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media (min-width: 960px) {
+      .grid { grid-template-columns: 2fr 1fr; }
+    }
+
+    /* Thread list cards */
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: .8rem; padding: 1rem; }
+    .thread { display: grid; grid-template-columns: 64px 1fr; gap: 1rem; align-items: start; }
+    .votes {
+      display: grid; place-items: center; width: 64px; height: 64px; border-radius: .6rem; border: 1px solid var(--line);
+      background: rgba(79,70,229,.08);
+    }
+    .votes strong { font-size: 1.1rem; }
+    .meta { color: var(--muted); font-size: .9rem; margin-top: .25rem; }
+    .tags { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+    .tag { background: var(--tag); border: 1px solid var(--line); border-radius: .5rem; padding: .1rem .5rem; font-size: .8rem; }
+
+    /* Thread page */
+    .crumbs { color: var(--muted); font-size: .9rem; margin: 1rem 0 .5rem; }
+    .crumbs a { color: inherit; text-decoration: underline; }
+    article.thread-view header h1 { margin: .2rem 0; font-size: clamp(1.2rem, 1.8vw + .8rem, 1.8rem); }
+
+    .post { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 1rem; }
+    .post:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+    .post .byline { color: var(--muted); font-size: .9rem; }
+    .post .content { margin-top: .5rem; }
+
+    .reply-box { margin-top: 1rem; border: 1px dashed var(--line); border-radius: .6rem; padding: .8rem; }
+    .reply-box textarea { width: 100%; min-height: 120px; padding: .6rem .8rem; border-radius: .5rem; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+    .btn {
+      display: inline-block; margin-top: .6rem; padding: .55rem .9rem; border-radius: .6rem; border: 1px solid var(--line);
+      background: var(--accent); color: var(--accent-contrast); font-weight: 600;
+    }
+    .btn[disabled] { opacity: .6; cursor: not-allowed; }
+
+    footer { margin: 2rem 0 3rem; color: var(--muted); font-size: .9rem; text-align: center; }
+
+    /* Simple "pages" with anchor navigation */
+    section[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#content">Skip to content</a>
+  <header>
+    <div class="container">
+      <div class="topbar" role="banner">
+        <div class="logo" aria-label="Site title">📣 Simple Forum</div>
+        <div class="search">
+          <label for="q" class="sr-only">Search</label>
+          <input id="q" name="q" placeholder="Search (static demo)…" aria-label="Search (static demo)" />
+        </div>
+        <a href="#new-thread" class="btn" style="margin:0">New Thread</a>
+      </div>
+      <nav aria-label="Primary">
+        <div class="tabs">
+          <a class="tab" href="#home" aria-current="page">All</a>
+          <a class="tab" href="#cat-web">Web Dev</a>
+          <a class="tab" href="#cat-research">Research</a>
+          <a class="tab" href="#cat-general">General</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content" class="container">
+    <div class="grid">
+      <section id="home">
+        <h2 style="margin-top:1rem">Latest Questions</h2>
+
+        <!-- Thread 1 Card -->
+        <div class="card thread">
+          <div class="votes"><div><strong>12</strong><div class="meta">votes</div></div></div>
+          <div>
+            <h3 style="margin:0"><a href="#t-center-div">How do I center a &lt;div&gt; horizontally and vertically?</a></h3>
+            <div class="meta">asked by <strong>codedaisy</strong> • 3 replies • in <a href="#cat-web">Web Dev</a></div>
+            <div class="tags">
+              <span class="tag">css</span>
+              <span class="tag">layout</span>
+              <span class="tag">flexbox</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thread 2 Card -->
+        <div class="card thread">
+          <div class="votes"><div><strong>7</strong><div class="meta">votes</div></div></div>
+          <div>
+            <h3 style="margin:0"><a href="#t-gamification-resources">Best resources to start with gamification research?</a></h3>
+            <div class="meta">asked by <strong>researchrookie</strong> • 2 replies • in <a href="#cat-research">Research</a></div>
+            <div class="tags">
+              <span class="tag">gamification</span>
+              <span class="tag">HCI</span>
+              <span class="tag">literature</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thread 3 Card -->
+        <div class="card thread">
+          <div class="votes"><div><strong>4</strong><div class="meta">votes</div></div></div>
+          <div>
+            <h3 style="margin:0"><a href="#t-terminal-tips">What’s your favorite terminal productivity tip?</a></h3>
+            <div class="meta">asked by <strong>cli_n00b</strong> • 5 replies • in <a href="#cat-general">General</a></div>
+            <div class="tags">
+              <span class="tag">terminal</span>
+              <span class="tag">productivity</span>
+              <span class="tag">bash</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside>
+        <div class="card">
+          <h3 style="margin-top:.2rem">About</h3>
+          <p>This is a static, single‑file HTML mockup of a forum. Links jump to sections below. Buttons are non‑functional.</p>
+          <ul>
+            <li>Semantic markup &amp; responsive layout</li>
+            <li>Accessible landmarks and labels</li>
+            <li>Light/Dark mode via system preference</li>
+          </ul>
+        </div>
+        <div class="card" id="new-thread">
+          <h3 style="margin-top:.2rem">Start a New Thread</h3>
+          <label>Title<br><input placeholder="(demo – does not submit)" style="width:100%; padding:.5rem; border:1px solid var(--line); border-radius:.5rem; background:var(--bg); color:var(--fg)"></label>
+          <label style="display:block; margin-top:.5rem">Category
+            <select style="width:100%; padding:.5rem; border:1px solid var(--line); border-radius:.5rem; background:var(--bg); color:var(--fg)">
+              <option>Web Dev</option>
+              <option>Research</option>
+              <option>General</option>
+            </select>
+          </label>
+          <label style="display:block; margin-top:.5rem">Body
+            <textarea rows="4" style="width:100%; padding:.5rem; border:1px solid var(--line); border-radius:.5rem; background:var(--bg); color:var(--fg)"></textarea>
+          </label>
+          <button class="btn" disabled aria-disabled="true" title="Static demo">Post (disabled)</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Thread Views (anchor targets) -->
+    <article id="t-center-div" class="thread-view card" style="margin-top:1.5rem">
+      <div class="crumbs"><a href="#home">All</a> › Web Dev</div>
+      <header>
+        <h1>How do I center a &lt;div&gt; horizontally and vertically?</h1>
+        <div class="meta">asked by <strong>codedaisy</strong> • 12 votes • 3 replies • tags: <span class="tag">css</span> <span class="tag">layout</span> <span class="tag">flexbox</span></div>
+      </header>
+
+      <section class="post">
+        <div class="byline">Question • posted 2 hours ago</div>
+        <div class="content">
+          <p>I need to center a child <code>&lt;div&gt;</code> inside a parent both horizontally and vertically. What’s the simplest modern CSS approach?</p>
+        </div>
+      </section>
+
+      <section class="post">
+        <div class="byline">Answer by <strong>frontendluke</strong> • accepted</div>
+        <div class="content">
+          <pre><code>.parent { display: grid; place-items: center; min-height: 200px; }
+.child { width: 200px; height: 100px; }</code></pre>
+          <p>Using CSS Grid with <code>place-items: center</code> is concise and widely supported.</p>
+        </div>
+      </section>
+
+      <section class="post">
+        <div class="byline">Answer by <strong>cssfan</strong></div>
+        <div class="content">
+          <pre><code>.parent { display:flex; align-items:center; justify-content:center; }</code></pre>
+          <p>Flexbox is also great and works even when you don’t know the child size.</p>
+        </div>
+      </section>
+
+      <section class="post">
+        <div class="byline">Comment by <strong>codedaisy</strong></div>
+        <div class="content"><p>Thanks! Grid did the trick.</p></div>
+      </section>
+
+      <div class="reply-box" aria-label="Reply form (static)">
+        <textarea placeholder="Write a reply… (static demo)"></textarea>
+        <button class="btn" disabled>Reply (disabled)</button>
+      </div>
+    </article>
+
+    <article id="t-gamification-resources" class="thread-view card" style="margin-top:1.5rem">
+      <div class="crumbs"><a href="#home">All</a> › Research</div>
+      <header>
+        <h1>Best resources to start with gamification research?</h1>
+        <div class="meta">asked by <strong>researchrookie</strong> • 7 votes • 2 replies • tags: <span class="tag">gamification</span> <span class="tag">HCI</span></div>
+      </header>
+
+      <section class="post">
+        <div class="byline">Question • posted yesterday</div>
+        <div class="content">
+          <p>Looking for foundational readings and reputable venues for gamification research.</p>
+        </div>
+      </section>
+
+      <section class="post">
+        <div class="byline">Answer by <strong>hcireader</strong></div>
+        <div class="content">
+          <ul>
+            <li>Deterding et al. on definitions &amp; boundaries</li>
+            <li>Tracy Fullerton’s <em>Game Design Workshop</em> for design process</li>
+            <li>CHI &amp; CHI Play proceedings for empirical work</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="post">
+        <div class="byline">Answer by <strong>metrics_maven</strong></div>
+        <div class="content">
+          <p>For measurement, look at IMI, Flow State Scale, PENS, and NASA‑TLX to evaluate experiences.</p>
+        </div>
+      </section>
+
+      <div class="reply-box">
+        <textarea placeholder="Write a reply… (static demo)"></textarea>
+        <button class="btn" disabled>Reply (disabled)</button>
+      </div>
+    </article>
+
+    <article id="t-terminal-tips" class="thread-view card" style="margin-top:1.5rem">
+      <div class="crumbs"><a href="#home">All</a> › General</div>
+      <header>
+        <h1>What’s your favorite terminal productivity tip?</h1>
+        <div class="meta">asked by <strong>cli_n00b</strong> • 4 votes • 5 replies • tags: <span class="tag">terminal</span> <span class="tag">bash</span></div>
+      </header>
+
+      <section class="post">
+        <div class="byline">Question • posted 3 days ago</div>
+        <div class="content"><p>I’m trying to speed up my shell workflow. Any small tips that make a big difference?</p></div>
+      </section>
+
+      <section class="post">
+        <div class="byline">Answer by <strong>alias_cat</strong></div>
+        <div class="content"><p>Add helpful aliases and enable <code>fzf</code> for fuzzy finding history/files.</p></div>
+      </section>
+
+      <section class="post">
+        <div class="byline">Answer by <strong>histbuff</strong></div>
+        <div class="content"><p>Use <code>Ctrl+r</code> for reverse‑search, and <code>!!</code> to rerun last command (add <code>sudo !!</code> for quick repeat).</p></div>
+      </section>
+
+      <section class="post">
+        <div class="byline">Answer by <strong>prompt_artist</strong></div>
+        <div class="content"><p>Customize your prompt to show git branch + exit codes so errors are obvious.</p></div>
+      </section>
+
+      <div class="reply-box">
+        <textarea placeholder="Write a reply… (static demo)"></textarea>
+        <button class="btn" disabled>Reply (disabled)</button>
+      </div>
+    </article>
+
+    <footer>
+      <p>© 2025 Simple Forum • Static demo (no backend). Built with semantic HTML &amp; a sprinkle of CSS.</p>
+    </footer>
+  </main>
+
+</body>
+</html>

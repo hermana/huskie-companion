@@ -17,8 +17,9 @@ clippy.Balloon.prototype = {
 
     _setup:function () {
 
-        this._balloon = $('<div class="clippy-balloon"><div class="clippy-tip"></div><div class="clippy-content"></div></div> ').hide();
-        this._content = this._balloon.find('.clippy-content');
+       // this._balloon = $('<div class="clippy-balloon"><div class="clippy-tip"></div><div class="clippy-content"></div></div> ').hide();
+       this._balloon = this._getGameContent(); 
+       this._content = this._balloon.find('.clippy-content');
 
         $(document.body).append(this._balloon);
     },
@@ -100,6 +101,39 @@ clippy.Balloon.prototype = {
         if ((top + bH + m) > wH || (left + bW + m) > wW) return true;
 
         return false;
+    },
+
+    _getGameContent:function () {
+        // return $(`<div class="clippy-balloon">
+        //             <div class="clippy-tip">
+        //             </div>
+        //             <div class="clippy-content">
+        //             </div>
+        //             </div> `);
+        return $(`
+        <form class="clippy-content">
+            <p>Select Your Gender:</p><br><select name="gender" size="3">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Others">Others</option>
+                </select>
+        </form>
+        `);
+    },
+
+    openGame:function (){
+        this._hidden = false;
+        this.show();
+        var c = this._content;
+        //previously 'auto'
+        c.height(500);
+        c.width(500);
+        // add the text
+        c.height(c.height());
+        c.width(c.width());
+        c.text('');
+        this.reposition();
+        this._complete = complete;
     },
 
     speak:function (complete, text, hold) {
