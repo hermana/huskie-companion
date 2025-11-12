@@ -8,6 +8,8 @@
   --tag-text: #444;
   --radius: 8px;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --hover: #e9e9e9;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 .clippy, .clippy-balloon {
@@ -122,59 +124,47 @@ body {
 }
 
 
-/* 
-
-
-.clippy-balloon {
-
-
-
+/* Container */
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap; /* allows wrapping on small screens */
+  background: #f6f6f6;
+  padding: 1rem;
 }
 
-.clippy-content {
-    max-width: 1000px;
-    min-width: 120px;
-    font-family: "Microsoft Sans", sans-serif;
-    font-size: 10pt;
-    position:fixed;
+/* Buttons */
+.btn {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 1.25rem;
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px var(--shadow);
 }
 
-.clippy-tip {
-    width: 10px;
-    height: 16px;
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAgCAMAAAAlvKiEAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAlQTFRF///MAAAA////52QwgAAAAAN0Uk5T//8A18oNQQAAAGxJREFUeNqs0kEOwCAIRFHn3//QTUU6xMyyxii+jQosrTPkyPEM6IN3FtzIRk1U4dFeKWQiH6pRRowMVKEmvronEynkwj0uZJgR22+YLopPSo9P34wJSamLSU7lSIWLJU7NkNomNlhqxUeAAQC+TQLZyEuJBwAAAABJRU5ErkJggg==) no-repeat;
-    position: absolute;
+.btn:hover {
+  background: var(--hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px var(--shadow);
 }
 
-.clippy-top-left .clippy-tip {
-    top: 100%;
-    margin-top: 0px;
-    left: 100%;
-    margin-left: -50px;
+.btn:focus {
+  outline: 2px solid #b0b0b0;
+  outline-offset: 2px;
 }
 
-.clippy-top-right .clippy-tip {
-    top: 100%;
-    margin-top: 0px;
-    left: 0;
-    margin-left: 50px;
-    background-position: -10px 0;
-
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px var(--shadow);
 }
 
-.clippy-bottom-right .clippy-tip {
-    top: 0;
-    margin-top: -16px;
-    left: 0;
-    margin-left: 50px;
-    background-position: -10px -16px;
-}
 
-.clippy-bottom-left .clippy-tip {
-    top: 0;
-    margin-top: -16px;
-    left: 100%;
-    margin-left: -50px;
-    background-position: 0px -16px;
-}
- */
+
+
