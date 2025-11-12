@@ -683,19 +683,31 @@ clippy.Balloon.prototype = {
         $(document.body).append(this._balloon);
 
         $("#my-huskie-btn").click(function(){
-        alert("My huskie button clicked.");
+            $(".my-quests").hide();
+            $(".my-huskie").show();
+            $(".my-team").hide();
+            $(".my-toolkit").hide();
         });
 
         $("#my-quest-btn").click(function(){
-        alert("My quest button clicked.");
+            $(".my-quests").show();
+            $(".my-huskie").hide();
+            $(".my-team").hide();
+            $(".my-toolkit").hide();
         });
 
         $("#my-team-btn").click(function(){
-        alert("My quest button clicked.");
+            $(".my-quests").hide();
+            $(".my-huskie").hide();
+            $(".my-team").show();
+            $(".my-toolkit").hide();
         });
 
         $("#my-toolkit-btn").click(function(){
-        alert("My quest button clicked.");
+            $(".my-quests").hide();
+            $(".my-huskie").hide();
+            $(".my-team").hide();
+            $(".my-toolkit").show();
         });
 
     },
@@ -705,37 +717,48 @@ clippy.Balloon.prototype = {
         <div class="clippy-balloon">
         <div class="clippy-content">
         <section id="home" style="position:absolute;">
-        <h2 class="header" style="margin-top:1rem">My Quest</h2>
-            <div class="card thread">
-            <div class="Question"><div><strong>1</strong></div></div>
-            <div>
-                <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
-            </div>
-            </div>
-            <div class="card thread">
-            <div class="Question"><div><strong>2</strong></div></div>
-            <div>
-                <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
-            </div>
-            </div>
-            <div class="card thread">
-            <div class="Question"><div><strong>3</strong></div></div>
-            <div>
-                <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
-            </div>
-            </div>
-            <div class="card thread">
-            <div class="Question"><div><strong>4</strong></div></div>
-            <div>
-                <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
-            </div>
-            </div>
-            <div class="button-row">
-                <button id="my-quest-btn" class="btn">My Quest</button>
-                <button id="my-huskie-btn" class="btn">My Huskie</button>
-                <button id="my-team-btn" class="btn">My Team</button>
-                <button id="my-toolkit-btn" class="btn">My Toolkit</button>
-            </div>
+        <div class="my-quests">
+            <h2 class="header" style="margin-top:1rem">My Quest</h2>
+                <div class="card thread">
+                <div class="Question"><div><strong>1</strong></div></div>
+                <div>
+                    <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
+                </div>
+                </div>
+                <div class="card thread">
+                <div class="Question"><div><strong>2</strong></div></div>
+                <div>
+                    <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
+                </div>
+                </div>
+                <div class="card thread">
+                <div class="Question"><div><strong>3</strong></div></div>
+                <div>
+                    <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
+                </div>
+                </div>
+                <div class="card thread">
+                <div class="Question"><div><strong>4</strong></div></div>
+                <div>
+                    <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
+                </div>
+                </div>
+        </div>
+        <div class="my-huskie" hidden=true>
+            <h2 class="header" style="margin-top:1rem">My Huskie</h2>
+        </div>
+        <div class="my-team" hidden=true>
+            <h2 class="header" style="margin-top:1rem">My Team</h2>
+        </div>
+        <div class="my-toolkit" hidden=true>
+            <h2 class="header" style="margin-top:1rem">My Toolkit</h2>
+        </div>
+        <div class="button-row">
+            <button id="my-quest-btn" class="btn">My Quest</button>
+            <button id="my-huskie-btn" class="btn">My Huskie</button>
+            <button id="my-team-btn" class="btn">My Team</button>
+            <button id="my-toolkit-btn" class="btn">My Toolkit</button>
+        </div>
         </div>
         </div>
         `);
