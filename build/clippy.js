@@ -685,25 +685,33 @@ clippy.Balloon.prototype = {
     _getGameContent:function () {
         return $(`
         <div class="clippy-balloon">
-        <div class="clippy-tip">
         <div class="clippy-content">
-<section id="home" style="position:absolute;">
-        <h2 style="margin-top:1rem">Latest Questions</h2>
-
-        <!-- Thread 1 Card -->
-        <div class="card thread">
-          <div class="votes"><div><strong>12</strong><div class="meta">votes</div></div></div>
-          <div>
-            <h3 style="margin:0"><a href="#t-center-div">How do I center a &lt;div&gt; horizontally and vertically?</a></h3>
-            <div class="meta">asked by <strong>codedaisy</strong> • 3 replies • in <a href="#cat-web">Web Dev</a></div>
-            <div class="tags">
-              <span class="tag">css</span>
-              <span class="tag">layout</span>
-              <span class="tag">flexbox</span>
+        <section id="home" style="position:absolute;">
+        <h2 class="header" style="margin-top:1rem">My Quests</h2>
+            <div class="card thread">
+            <div class="Question"><div><strong>1</strong><div class="meta">Question</div></div></div>
+            <div>
+                <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
             </div>
-          </div>
-        </div>
-        </div>
+            </div>
+            <div class="card thread">
+            <div class="Question"><div><strong>2</strong><div class="meta">Question</div></div></div>
+            <div>
+                <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
+            </div>
+            </div>
+            <div class="card thread">
+            <div class="Question"><div><strong>3</strong><div class="meta">Question</div></div></div>
+            <div>
+                <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
+            </div>
+            </div>
+            <div class="card thread">
+            <div class="Question"><div><strong>4</strong><div class="meta">Question</div></div></div>
+            <div>
+                <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
+            </div>
+            </div>
         </div>
         </div>
         `);
