@@ -357,6 +357,7 @@ clippy.Agent.prototype = {
 
     _onClick:function () {
        // this.speak("This is where the interactive window will go!");
+       console.log("on click function is called")
        this.openGame();
     },
 
@@ -680,6 +681,23 @@ clippy.Balloon.prototype = {
         this._content = this._balloon.find('.clippy-content');
 
         $(document.body).append(this._balloon);
+
+        $("#my-huskie-btn").click(function(){
+        alert("My huskie button clicked.");
+        });
+
+        $("#my-quest-btn").click(function(){
+        alert("My quest button clicked.");
+        });
+
+        $("#my-team-btn").click(function(){
+        alert("My quest button clicked.");
+        });
+
+        $("#my-toolkit-btn").click(function(){
+        alert("My quest button clicked.");
+        });
+
     },
 
     _getGameContent:function () {
@@ -713,10 +731,10 @@ clippy.Balloon.prototype = {
             </div>
             </div>
             <div class="button-row">
-                <button class="btn">My Quest</button>
-                <button class="btn">My Huskie</button>
-                <button class="btn">My Team</button>
-                <button class="btn">My Toolkit</button>
+                <button id="my-quest-btn" class="btn">My Quest</button>
+                <button id="my-huskie-btn" class="btn">My Huskie</button>
+                <button id="my-team-btn" class="btn">My Team</button>
+                <button id="my-toolkit-btn" class="btn">My Toolkit</button>
             </div>
         </div>
         </div>
@@ -1081,4 +1099,5 @@ clippy.Queue.prototype = {
         this._progressQueue();
     }
 };
+
 
