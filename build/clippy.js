@@ -796,6 +796,25 @@ clippy.Balloon.prototype = {
         </div>
         <div class="my-team" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Team</h2>
+                <div class="card thread">
+                <div class="Question"><strong>1</strong></div>
+                <div>
+                    <h3>Alice<span class='hearts'>&#10084 &#10084 &#10084</span></h3>
+                </div>
+                </div>
+                <div class="card thread">
+                <div class="Question"><strong>2</strong></div>
+                <div>
+                    <h3>Bob <span class='hearts'>&#10084</span></h3>
+                </div>
+                </div>
+                <div class="card thread">
+                <div class="Question"><strong>3</strong></div>
+                <div>
+                    <h3>Kevin</h3>
+                </div>
+                </div>
+
         </div>
         <div class="my-toolkit" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Toolkit</h2>
