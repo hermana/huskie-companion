@@ -357,7 +357,6 @@ clippy.Agent.prototype = {
 
     _onClick:function () {
        // this.speak("This is where the interactive window will go!");
-       console.log("on click function is called")
        this.openGame();
     },
 
@@ -720,25 +719,25 @@ clippy.Balloon.prototype = {
         <div class="my-quests">
             <h2 class="header" style="margin-top:1rem">My Quest</h2>
                 <div class="card thread">
-                <div class="Question"><div><strong>1</strong></div></div>
+                <div class="Question"><strong>1</strong><div class='check'>&#x2713</div></div>
                 <div>
                     <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
                 </div>
                 </div>
                 <div class="card thread">
-                <div class="Question"><div><strong>2</strong></div></div>
+                <div class="Question"><strong>2</strong></div>
                 <div>
                     <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
                 </div>
                 </div>
                 <div class="card thread">
-                <div class="Question"><div><strong>3</strong></div></div>
+                <div class="Question"><strong>3</strong><div class='check'>&#x2713</div></div>
                 <div>
                     <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
                 </div>
                 </div>
                 <div class="card thread">
-                <div class="Question"><div><strong>4</strong></div></div>
+                <div class="Question"><strong>4</strong></div>
                 <div>
                     <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
                 </div>

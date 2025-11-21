@@ -166,5 +166,10 @@ body {
 }
 
 
-
+.check{
+    color: green;
+    font-size: 2.5rem;
+    margin-left: 1rem;
+    display: inline-block;
+}
 
