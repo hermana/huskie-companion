@@ -686,6 +686,7 @@ clippy.Balloon.prototype = {
             $(".my-huskie").show();
             $(".my-team").hide();
             $(".my-toolkit").hide();
+            $("article.question-one").hide();
         });
 
         $("#my-quest-btn").click(function(){
@@ -693,6 +694,7 @@ clippy.Balloon.prototype = {
             $(".my-huskie").hide();
             $(".my-team").hide();
             $(".my-toolkit").hide();
+            $("article.question-one").hide();
         });
 
         $("#my-team-btn").click(function(){
@@ -700,6 +702,7 @@ clippy.Balloon.prototype = {
             $(".my-huskie").hide();
             $(".my-team").show();
             $(".my-toolkit").hide();
+            $("article.question-one").hide();
         });
 
         $("#my-toolkit-btn").click(function(){
@@ -707,6 +710,12 @@ clippy.Balloon.prototype = {
             $(".my-huskie").hide();
             $(".my-team").hide();
             $(".my-toolkit").show();
+            $("article.question-one").hide();
+        });
+
+        $("#question-one").click(function(){
+            $(".my-quests").hide();
+            $("article.question-one").show();
         });
 
     },
@@ -715,13 +724,52 @@ clippy.Balloon.prototype = {
         return $(`
         <div class="clippy-balloon">
         <div class="clippy-content">
+
+
+
+        <!-- Threads -->
+        <article class="question-one thread-view card" style="margin-top:1.5rem" hidden=true>
+            <header>
+                <h1>Question about something on IPortal?</h1>
+                <div class="meta">asked by <strong>administrator</strong> 3 replies </div>
+            </header>
+
+            <section class="post">
+                <div class="byline">Question posted 2 hours ago</div>
+                <div class="content">
+                <p>Here are some more details on the question and some elaboration.</p>
+                </div>
+            </section>
+
+            <section class="post">
+                <div class="byline">Answer by <strong>playerone</strong><div class='check'>&#x2713</div></div>
+                <div class="content">
+                <p>Here is an answer I have found to the question.</p>
+                </div>
+            </section>
+
+            <section class="post">
+                <div class="byline">Answer by <strong>huskiefan</strong></div>
+                <div class="content">
+                <p>I agree with the answer above, and I even have some additional thoughts.</p>
+                </div>
+            </section>
+
+            <section class="post">
+                <div class="byline">Comment by <strong>admin</strong></div>
+                <div class="content"><p>This is correct, and here is some other related information.</p></div>
+            </section>
+        </article>
+
+
+
         <section id="home" style="position:absolute;">
         <div class="my-quests">
             <h2 class="header" style="margin-top:1rem">My Quest</h2>
                 <div class="card thread">
                 <div class="Question"><strong>1</strong><div class='check'>&#x2713</div></div>
-                <div>
-                    <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
+                <div id="question-one">
+                    <h3 style="margin:0"><a>Question about something on iPortal?</a></h3>
                 </div>
                 </div>
                 <div class="card thread">
