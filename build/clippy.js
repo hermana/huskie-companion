@@ -759,6 +759,9 @@ clippy.Balloon.prototype = {
                 <div class="byline">Comment by <strong>admin</strong></div>
                 <div class="content"><p>This is correct, and here is some other related information.</p></div>
             </section>
+
+            <textarea placeholder="Add a comment..."></textarea>
+   
         </article>
 
 
