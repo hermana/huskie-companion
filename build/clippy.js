@@ -5,7 +5,7 @@ var clippy = {};
  *
  * @constructor
  */
-clippy.Agent = function (path, data, sounds) {
+clippy.Agent = function (path, data, sounds, name) {
     this.path = path;
 
     this._queue = new clippy.Queue($.proxy(this._onQueueEmpty, this));
@@ -16,7 +16,7 @@ clippy.Agent = function (path, data, sounds) {
 
     this._animator = new clippy.Animator(this._el, path, data, sounds);
 
-    this._balloon = new clippy.Balloon(this._el);
+    this._balloon = new clippy.Balloon(this._el, name);
 
     this._setupEvents();
 };
@@ -660,11 +660,11 @@ clippy.Animator.States = { WAITING:1, EXITED:0 };
  *
  * @constructor
  */
-clippy.Balloon = function (targetEl) {
+clippy.Balloon = function (targetEl, name) {
     this._targetEl = targetEl;
-
+    this._name = name
     this._hidden = true;
-    this._setup();
+    this._setup(name);
 };
 
 clippy.Balloon.prototype = {
@@ -673,54 +673,59 @@ clippy.Balloon.prototype = {
    // CLOSE_BALLOON_DELAY:2000,
    CLOSE_BALLOON_DELAY:5000000, //For debugging for now, but will also need to be longer.
 
-    _setup:function () {
+    _setup:function (name) {
 
         //this._balloon = $('<div class="clippy-balloon"><div class="clippy-tip"></div><div class="clippy-content"></div></div> ').hide();
         this._balloon = this._getGameContent();
         this._content = this._balloon.find('.clippy-content');
 
+
         $(document.body).append(this._balloon);
 
-        $("#my-huskie-btn").click(function(){
-            $(".my-quests").hide();
-            $(".my-huskie").show();
-            $(".my-team").hide();
-            $(".my-toolkit").hide();
-            $("article.question-one").hide();
+        $("#"+this._name+"-huskie-btn").click(function(){
+            $("."+name+"-quests").hide();
+            $("."+name+"-huskie").show();
+            $("."+name+"-team").hide();
+            $("."+name+"-toolkit").hide();
+            $("article."+name+"-question-one").hide();
         });
 
-        $("#my-quest-btn").click(function(){
-            $(".my-quests").show();
-            $(".my-huskie").hide();
-            $(".my-team").hide();
-            $(".my-toolkit").hide();
-            $("article.question-one").hide();
+        $("#"+this._name+"-quest-btn").click(function(){
+            console.log('the quest button was clicked')
+            $("."+name+"-quests").show();
+            $("."+name+"-huskie").hide();
+            $("."+name+"-team").hide();
+            $("."+name+"-toolkit").hide();
+            $("article."+name+"-question-one").hide();
         });
 
-        $("#my-team-btn").click(function(){
-            $(".my-quests").hide();
-            $(".my-huskie").hide();
-            $(".my-team").show();
-            $(".my-toolkit").hide();
-            $("article.question-one").hide();
+        $("#"+this._name+"-team-btn").click(function(){
+            $("."+name+"-quests").hide();
+            $("."+name+"-huskie").hide();
+            $("."+name+"-team").show();
+            $("."+name+"-toolkit").hide();
+            $("article."+name+"-question-one").hide();
         });
 
-        $("#my-toolkit-btn").click(function(){
-            $(".my-quests").hide();
-            $(".my-huskie").hide();
-            $(".my-team").hide();
-            $(".my-toolkit").show();
-            $("article.question-one").hide();
+        $("#"+this._name+"-toolkit-btn").click(function(){
+            $("."+name+"-quests").hide();
+            $("."+name+"-huskie").hide();
+            $("."+name+"-team").hide();
+            $("."+name+"-toolkit").show();
+            $("article."+name+"-question-one").hide();
         });
 
-        $("#question-one").click(function(){
-            $(".my-quests").hide();
-            $("article.question-one").show();
+        $("#"+this._name+"-question-one").click(function(){
+            console.log('the question one was clicked')
+            console.log("article."+name+"-question-one")
+            $("."+name+"-quests").hide();
+            $("article."+name+"-question-one").show();
         });
 
     },
 
     _getGameContent:function () {
+
         return $(`
         <div class="clippy-balloon">
         <div class="clippy-content">
@@ -728,7 +733,7 @@ clippy.Balloon.prototype = {
 
 
         <!-- Threads -->
-        <article class="question-one thread-view card" style="margin-top:1.5rem" hidden=true>
+        <article class="`+this._name+`-question-one thread-view card" style="margin-top:1.5rem" hidden=true>
             <header>
                 <h1>Question about something on IPortal?</h1>
                 <div class="meta">asked by <strong>administrator</strong> 3 replies </div>
@@ -766,12 +771,12 @@ clippy.Balloon.prototype = {
 
 
 
-        <section id="home" style="position:absolute;">
-        <div class="my-quests">
+        <section id="`+this._name+`-home" style="position:absolute;">
+        <div class="`+this._name+`-quests">
             <h2 class="header" style="margin-top:1rem">My Quest</h2>
                 <div class="card thread">
                 <div class="Question"><strong>1</strong><div class='check'>&#x2713</div></div>
-                <div id="question-one">
+                <div id="`+this._name+`-question-one">
                     <h3 style="margin:0"><a>Question about something on iPortal?</a></h3>
                 </div>
                 </div>
@@ -794,10 +799,10 @@ clippy.Balloon.prototype = {
                 </div>
                 </div>
         </div>
-        <div class="my-huskie" hidden=true>
+        <div class="`+this._name+`-huskie" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Huskie</h2>
         </div>
-        <div class="my-team" hidden=true>
+        <div class="`+this._name+`-team" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Team</h2>
                 <div class="card thread">
                 <div class="Question"><strong>1</strong></div>
@@ -819,14 +824,14 @@ clippy.Balloon.prototype = {
                 </div>
 
         </div>
-        <div class="my-toolkit" hidden=true>
+        <div class="`+this._name+`-toolkit" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Toolkit</h2>
         </div>
         <div class="button-row">
-            <button id="my-quest-btn" class="btn">My Quest</button>
-            <button id="my-huskie-btn" class="btn">My Huskie</button>
-            <button id="my-team-btn" class="btn">My Team</button>
-            <button id="my-toolkit-btn" class="btn">My Toolkit</button>
+            <button id="`+this._name+`-quest-btn" class="btn">My Quest</button>
+            <button id="`+this._name+`-huskie-btn" class="btn">My Huskie</button>
+            <button id="`+this._name+`-team-btn" class="btn">My Team</button>
+            <button id="`+this._name+`-toolkit-btn" class="btn">My Toolkit</button>
         </div>
         </div>
         </div>
@@ -1045,7 +1050,7 @@ clippy.load = function (name, successCb, failCb) {
 
     // wrapper to the success callback
     var cb = function () {
-        var a = new clippy.Agent(path, data,sounds);
+        var a = new clippy.Agent(path, data,sounds, name);
         successCb(a);
     };
 

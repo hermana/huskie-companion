@@ -17,7 +17,6 @@ clippy.Balloon.prototype = {
 
     _setup:function () {
 
-       // this._balloon = $('<div class="clippy-balloon"><div class="clippy-tip"></div><div class="clippy-content"></div></div> ').hide();
        this._balloon = this._getGameContent(); 
        this._content = this._balloon.find('.clippy-content');
 
