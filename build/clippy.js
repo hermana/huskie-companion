@@ -716,8 +716,6 @@ clippy.Balloon.prototype = {
         });
 
         $("#"+this._name+"-question-one").click(function(){
-            console.log('the question one was clicked')
-            console.log("article."+name+"-question-one")
             $("."+name+"-quests").hide();
             $("article."+name+"-question-one").show();
         });
@@ -773,7 +771,7 @@ clippy.Balloon.prototype = {
 
         <section id="`+this._name+`-home" style="position:absolute;">
         <div class="`+this._name+`-quests">
-            <h2 class="header" style="margin-top:1rem">My Quest</h2>
+            <h2 class="header" style="margin-top:1rem">`+this._name+`'s Questions</h2>
                 <div class="card thread">
                 <div class="Question"><strong>1</strong><div class='check'>&#x2713</div></div>
                 <div id="`+this._name+`-question-one">
@@ -824,19 +822,21 @@ clippy.Balloon.prototype = {
                 </div>
 
         </div>
-        <div class="`+this._name+`-toolkit" hidden=true>
-            <h2 class="header" style="margin-top:1rem">My Toolkit</h2>
-        </div>
         <div class="button-row">
-            <button id="`+this._name+`-quest-btn" class="btn">My Quest</button>
+            <button id="`+this._name+`-quest-btn" class="btn">Questions</button>
             <button id="`+this._name+`-huskie-btn" class="btn">My Huskie</button>
             <button id="`+this._name+`-team-btn" class="btn">My Team</button>
-            <button id="`+this._name+`-toolkit-btn" class="btn">My Toolkit</button>
+
         </div>
         </div>
         </div>
         `);
     },
+
+        // <div class="`+this._name+`-toolkit" hidden=true>
+        //     <h2 class="header" style="margin-top:1rem">My Toolkit</h2>
+        // </div>
+        // <button id="`+this._name+`-toolkit-btn" class="btn">My Toolkit</button>
 
     reposition:function () {
         var sides = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
