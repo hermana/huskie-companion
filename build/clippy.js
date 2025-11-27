@@ -182,9 +182,11 @@ clippy.Agent.prototype = {
     },
 
     openGame:function () {
-        this._addToQueue(function () {
-            this._balloon.openGame();
-        }, this);
+        //FIXME: what was the point of queuing events?? and why didn't it work after the second click!!
+        this._balloon.openGame();
+        // this._addToQueue(function () {
+        //     this._balloon.openGame();
+        // }, this);
     },
 
     /***
@@ -356,7 +358,6 @@ clippy.Agent.prototype = {
     },
 
     _onClick:function () {
-       // this.speak("This is where the interactive window will go!");
        this.openGame();
     },
 
@@ -400,10 +401,10 @@ clippy.Agent.prototype = {
     /**************************** Drag ************************************/
 
     _startDrag:function (e) {
+        this._offset = this._calculateClickOffset(e);
         // pause animations
         this.pause();
-        this._balloon.hide(true);
-        this._offset = this._calculateClickOffset(e);
+        //this._balloon.hide(true);
 
         this._moveHandle = $.proxy(this._dragMove, this);
         this._upHandle = $.proxy(this._finishDrag, this);
@@ -444,7 +445,7 @@ clippy.Agent.prototype = {
         $(window).off('mousemove', this._moveHandle);
         $(window).off('mouseup', this._upHandle);
         // resume animations
-        this._balloon.show();
+        //this._balloon.show();
         this.reposition();
         this.resume();
 
@@ -664,6 +665,7 @@ clippy.Balloon = function (targetEl, name) {
     this._targetEl = targetEl;
     this._name = name
     this._hidden = true;
+    this._num_clicks = 0;
     this._setup(name);
 };
 
@@ -691,7 +693,6 @@ clippy.Balloon.prototype = {
         });
 
         $("#"+this._name+"-quest-btn").click(function(){
-            console.log('the quest button was clicked')
             $("."+name+"-quests").show();
             $("."+name+"-huskie").hide();
             $("."+name+"-team").hide();
@@ -799,6 +800,7 @@ clippy.Balloon.prototype = {
         </div>
         <div class="`+this._name+`-huskie" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Huskie</h2>
+            <h3>`+this._num_clicks+`</h3>
         </div>
         <div class="`+this._name+`-team" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Team</h2>
@@ -921,29 +923,32 @@ clippy.Balloon.prototype = {
     },
 
     openGame:function (){
-        this._hidden = false;
-        this.show();
-        var c = this._content;
-        // set height to auto
-        c.height(500);
-        c.width(500);
-        c.height(c.height());
-        c.width(c.width());
-        this.reposition();
-        //this._complete = true;
+        if(this._hidden){
+            this._hidden = false;
+            this._num_clicks = this._num_clicks+1;
+            this.show();
+            var c = this._content;
+            c.height(500);
+            c.width(500);
+            c.height(c.height());
+            c.width(c.width());
+            this.reposition();
+        }else{
+            this._hidden = true;
+            this.hide(this._hidden);
+        }
+        this._complete = true;
     },
 
 
     speak:function (complete, text, hold) {
+        this._num_clicks = this._num_clicks+1;
         this._hidden = false;
         this.show();
         var c = this._content;
-        // set height to auto
         c.height('auto');
         c.width('auto');
-        // add the text
         c.text(text);
-        // set height
         c.height(c.height());
         c.width(c.width());
         c.text('');
