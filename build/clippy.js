@@ -773,6 +773,7 @@ clippy.Balloon.prototype = {
         <section id="`+this._name+`-home" style="position:absolute;">
         <div class="`+this._name+`-quests">
             <h2 class="header" style="margin-top:1rem">`+this._name+`'s Questions</h2>
+                <button id="`+this._name+`-ask-question" class="ask-question">Ask a Question</button>
                 <div class="card thread">
                 <div class="Question"><strong>1</strong><div class='check'>&#x2713</div></div>
                 <div id="`+this._name+`-question-one">
