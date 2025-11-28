@@ -32,14 +32,44 @@ app.post('/postQuestion', (req, res) => {
   `);
 
   const info = stmt.run(user_id, title, body);
-  res.json({ id: info.lastInsertRowid });
-
+  
   console.log('postQuestion was called');
   console.log('Request body:', req.body);
   
   res.status(200).json({ 
     success: true, 
+    id: info.lastInsertRowid,
     message: 'Question received' 
+  });
+});
+
+// GET endpoint for getQuestions
+app.get('/getQuestions', (req, res) => {
+  const { user_id } = req.query;
+  
+  if (!user_id) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'user_id query parameter is required' 
+    });
+  }
+
+  const stmt = db.prepare(`
+    SELECT id, user_id, accepted_response, title, body, created_at
+    FROM questions
+    WHERE user_id = ?
+    ORDER BY created_at DESC
+  `);
+
+  const questions = stmt.all(parseInt(user_id));
+  
+  console.log(`getQuestions was called for user_id: ${user_id}`);
+  console.log(`Found ${questions.length} questions`);
+  
+  res.status(200).json({
+    success: true,
+    user_id: parseInt(user_id),
+    questions: questions
   });
 });
 

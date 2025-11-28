@@ -724,6 +724,31 @@ clippy.Balloon.prototype = {
     },
 
     _getGameContent:function () {
+        // Call getQuestions API when _getGameContent is called
+        // Using synchronous AJAX to wait for the response before returning HTML
+        let questionsHTML = ``;
+        $.ajax({
+            url: 'http://localhost:3000/getQuestions',
+            type: 'GET',
+            data: { user_id: 1 },
+            async: false, // Make synchronous to wait for response
+            success: function(data) {
+                console.log('getQuestions API called - Questions retrieved:', data);
+                if (data.success && data.questions) {
+                    console.log('Found ' + data.questions.length + ' questions for user_id 1');
+                    questionsHTML = data.questions.map(question => `
+                        <div class="card thread">
+                            <div>
+                                <h3 style="margin:0"><a href="#t-center-div">${question.title}</a></h3>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error calling getQuestions API:', error);
+            }
+        });
 
         return $(`
         <div class="clippy-balloon">
@@ -774,30 +799,9 @@ clippy.Balloon.prototype = {
         <div class="`+this._name+`-quests">
             <h2 class="header" style="margin-top:1rem">`+this._name+`'s Questions</h2>
                 <button id="`+this._name+`-ask-question" class="ask-question">Ask a Question</button>
-                <div class="card thread">
-                <div class="Question"><strong>1</strong><div class='check'>&#x2713</div></div>
-                <div id="`+this._name+`-question-one">
-                    <h3 style="margin:0"><a>Question about something on iPortal?</a></h3>
-                </div>
-                </div>
-                <div class="card thread">
-                <div class="Question"><strong>2</strong></div>
-                <div>
-                    <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
-                </div>
-                </div>
-                <div class="card thread">
-                <div class="Question"><strong>3</strong><div class='check'>&#x2713</div></div>
-                <div>
-                    <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
-                </div>
-                </div>
-                <div class="card thread">
-                <div class="Question"><strong>4</strong></div>
-                <div>
-                    <h3 style="margin:0"><a href="#t-center-div">Question about something on iPortal?</a></h3>
-                </div>
-                </div>
+               <div class="forum-questions">
+                ${questionsHTML}
+               </div>
         </div>
         <div class="`+this._name+`-huskie" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Huskie</h2>
@@ -835,6 +839,7 @@ clippy.Balloon.prototype = {
         </div>
         `);
     },
+
 
         // <div class="`+this._name+`-toolkit" hidden=true>
         //     <h2 class="header" style="margin-top:1rem">My Toolkit</h2>

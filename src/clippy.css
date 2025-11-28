@@ -191,3 +191,8 @@ textarea{
     resize: vertical;
 }
 
+.forum-questions{
+  height: 300px;
+  width: 450px;
+  overflow: scroll;
+}
