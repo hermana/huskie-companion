@@ -687,32 +687,12 @@ clippy.Balloon.prototype = {
         $("#"+this._name+"-huskie-btn").click(function(){
             $("."+name+"-quests").hide();
             $("."+name+"-huskie").show();
-            $("."+name+"-team").hide();
-            $("."+name+"-toolkit").hide();
             $("article."+name+"-question-one").hide();
         });
 
         $("#"+this._name+"-quest-btn").click(function(){
             $("."+name+"-quests").show();
             $("."+name+"-huskie").hide();
-            $("."+name+"-team").hide();
-            $("."+name+"-toolkit").hide();
-            $("article."+name+"-question-one").hide();
-        });
-
-        $("#"+this._name+"-team-btn").click(function(){
-            $("."+name+"-quests").hide();
-            $("."+name+"-huskie").hide();
-            $("."+name+"-team").show();
-            $("."+name+"-toolkit").hide();
-            $("article."+name+"-question-one").hide();
-        });
-
-        $("#"+this._name+"-toolkit-btn").click(function(){
-            $("."+name+"-quests").hide();
-            $("."+name+"-huskie").hide();
-            $("."+name+"-team").hide();
-            $("."+name+"-toolkit").show();
             $("article."+name+"-question-one").hide();
         });
 
@@ -807,33 +787,9 @@ clippy.Balloon.prototype = {
             <h2 class="header" style="margin-top:1rem">My Huskie</h2>
             <h3>`+this._num_clicks+`</h3>
         </div>
-        <div class="`+this._name+`-team" hidden=true>
-            <h2 class="header" style="margin-top:1rem">My Team</h2>
-                <div class="card thread">
-                <div class="Question"><strong>1</strong></div>
-                <div>
-                    <h3>Alice<span class='hearts'>&#10084 &#10084 &#10084</span></h3>
-                </div>
-                </div>
-                <div class="card thread">
-                <div class="Question"><strong>2</strong></div>
-                <div>
-                    <h3>Bob <span class='hearts'>&#10084</span></h3>
-                </div>
-                </div>
-                <div class="card thread">
-                <div class="Question"><strong>3</strong></div>
-                <div>
-                    <h3>Kevin</h3>
-                </div>
-                </div>
-
-        </div>
         <div class="button-row">
             <button id="`+this._name+`-quest-btn" class="btn">Questions</button>
             <button id="`+this._name+`-huskie-btn" class="btn">My Huskie</button>
-            <button id="`+this._name+`-team-btn" class="btn">My Team</button>
-
         </div>
         </div>
         </div>
