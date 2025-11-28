@@ -10,8 +10,11 @@ $(document).ready(function() {
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({
-        timestamp: new Date().toISOString(),
-        buttonId: $(this).attr('id')
+        user_id:1, //hardcoded for single user for now. 
+        //title:$(this).find('input[name="title"]').val(),
+        title: "Test Question",
+        //body:$(this).find('textarea[name="body"]').val(),
+        body: "blah blah blah",
       }),
       success: function(response) {
         console.log('Question posted successfully:', response);

@@ -1,4 +1,4 @@
 private.js
 *.txt
 node_modules/
-database.db
+forum.db

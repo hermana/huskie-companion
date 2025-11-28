@@ -1,6 +1,7 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+//const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const db = require("./init-db.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,17 +22,18 @@ app.use((req, res, next) => {
   }
 });
 
-// Initialize SQLite database
-const db = new sqlite3.Database('./database.db', (err) => {
-  if (err) {
-    console.error('Error opening database:', err.message);
-  } else {
-    console.log('Connected to SQLite database');
-  }
-});
-
 // POST endpoint for postQuestion
 app.post('/postQuestion', (req, res) => {
+  const { user_id, title, body } = req.body;
+
+  const stmt = db.prepare(`
+    INSERT INTO questions (user_id, title, body)
+    VALUES (?, ?, ?)
+  `);
+
+  const info = stmt.run(user_id, title, body);
+  res.json({ id: info.lastInsertRowid });
+
   console.log('postQuestion was called');
   console.log('Request body:', req.body);
   
