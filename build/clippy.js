@@ -701,6 +701,35 @@ clippy.Balloon.prototype = {
             $("article."+name+"-question-one").show();
         });
 
+        $(".question").click(function(){
+            console.log("a question was clicked!");
+            let id = this.getAttribute("data-id");
+            let body = this.getAttribute("data-body");
+
+            // Make a synchronous AJAX call to getComments for the clicked question
+            let comments = {};
+            $.ajax({
+                url: 'http://localhost:3000/getComments',
+                type: 'GET',
+                data: { question_id: id },
+                async: false, // synchronous
+                success: function(data) {
+                    if (data.success) {
+                        // Save all comments to the comments object
+                        comments = data.comments;
+                        console.log(comments)
+                    } else {
+                        comments = {};
+                        console.error('Failed to retrieve comments:', data.error || data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    comments = {};
+                    console.error('Error calling getComments API:', error);
+                }
+            });
+            })
+
     },
 
     _getGameContent:function () {
@@ -717,9 +746,9 @@ clippy.Balloon.prototype = {
                 if (data.success && data.questions) {
                     console.log('Found ' + data.questions.length + ' questions for user_id 1');
                     questionsHTML = data.questions.map(question => `
-                        <div class="card thread">
+                        <div class="card thread question" data-id=${question.id} data-body="${question.body}">
                             <div>
-                                <h3 style="margin:0"><a href="#t-center-div">${question.title}</a></h3>
+                                <h3 style="margin:0"><a>${question.title}</a></h3>
                             </div>
                         </div>
                     `).join('');

@@ -73,6 +73,36 @@ app.get('/getQuestions', (req, res) => {
   });
 });
 
+// GET endpoint for getComments
+app.get('/getComments', (req, res) => {
+  const { question_id } = req.query;
+  
+  if (!question_id) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'question_id query parameter is required' 
+    });
+  }
+
+  const stmt = db.prepare(`
+    SELECT id, user_id, question_id, body, created_at
+    FROM comments
+    WHERE question_id = ?
+    ORDER BY created_at ASC
+  `);
+
+  const comments = stmt.all(parseInt(question_id));
+  
+  console.log(`getComments was called for question_id: ${question_id}`);
+  console.log(`Found ${comments.length} comments`);
+  
+  res.status(200).json({
+    success: true,
+    question_id: parseInt(question_id),
+    comments: comments
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
