@@ -705,37 +705,43 @@ clippy.Balloon.prototype = {
             console.log("a question was clicked!");
             let id = this.getAttribute("data-id");
             let body = this.getAttribute("data-body");
+            let title = this.getAttribute("data-title");
 
-            // Make a synchronous AJAX call to getComments for the clicked question
-            let comments = {};
             $.ajax({
                 url: 'http://localhost:3000/getComments',
                 type: 'GET',
                 data: { question_id: id },
                 async: false, // synchronous
                 success: function(data) {
-                    if (data.success) {
-                        // Save all comments to the comments object
-                        comments = data.comments;
-                        console.log(comments)
+                    if (data.success && data.comments) { 
+                        // Save all comments to the comments object // id, user_id, question_id, body, created_at
+                        threadHeaderHTML = `<header>
+                            <h1>${title}</h1>
+                            </header>`;
+                        commentsHTML = data.comments.map(comment => `
+                            <div class="content">
+                                <div class="byline">Answer by <strong>${comment.user_id}</strong><div class='check'>&#x2713</div></div>
+                                <p style="margin:0">${comment.body}</p>
+                            </div>
+                        `).join('');
+                        addCommentButtonHTML = `<button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;
+                        $('#comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML); 
                     } else {
-                        comments = {};
                         console.error('Failed to retrieve comments:', data.error || data);
                     }
                 },
                 error: function(xhr, status, error) {
-                    comments = {};
                     console.error('Error calling getComments API:', error);
                 }
             });
             })
-
     },
 
     _getGameContent:function () {
         // Call getQuestions API when _getGameContent is called
         // Using synchronous AJAX to wait for the response before returning HTML
         let questionsHTML = ``;
+        let commentsHTML= ``;
         $.ajax({
             url: 'http://localhost:3000/getQuestions',
             type: 'GET',
@@ -746,7 +752,7 @@ clippy.Balloon.prototype = {
                 if (data.success && data.questions) {
                     console.log('Found ' + data.questions.length + ' questions for user_id 1');
                     questionsHTML = data.questions.map(question => `
-                        <div class="card thread question" data-id=${question.id} data-body="${question.body}">
+                        <div class="card thread question" data-id=${question.id} data-body="${question.body} data-title=${question.title}">
                             <div>
                                 <h3 style="margin:0"><a>${question.title}</a></h3>
                             </div>
@@ -763,7 +769,9 @@ clippy.Balloon.prototype = {
         <div class="clippy-balloon">
         <div class="clippy-content">
 
-
+        <article id="comments-section" class="thread-view card">
+            
+        </article>
 
         <!-- Threads -->
         <article class="`+this._name+`-question-one thread-view card" style="margin-top:1.5rem" hidden=true>

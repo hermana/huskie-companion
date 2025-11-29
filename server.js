@@ -103,6 +103,34 @@ app.get('/getComments', (req, res) => {
   });
 });
 
+// POST endpoint for postComment
+app.post('/postComment', (req, res) => {
+  const { user_id, question_id, body } = req.body || {};
+
+  if (!user_id || !question_id || !body) {
+    return res.status(400).json({
+      success: false,
+      error: 'user_id, question_id, and body are required'
+    });
+  }
+
+  const stmt = db.prepare(`
+    INSERT INTO comments (user_id, question_id, body)
+    VALUES (?, ?, ?)
+  `);
+
+  const info = stmt.run(parseInt(user_id), parseInt(question_id), body);
+
+  console.log(`postComment was called for question_id: ${question_id}`);
+  console.log('Request body:', req.body);
+
+  res.status(200).json({
+    success: true,
+    id: info.lastInsertRowid,
+    message: 'Comment received'
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
