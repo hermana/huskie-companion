@@ -705,6 +705,7 @@ clippy.Balloon.prototype = {
             let id = this.getAttribute("data-id");
             let body = this.getAttribute("data-body");
             let title = this.getAttribute("data-title");
+            $("."+name+"-quests").hide();
             $.ajax({
                 url: 'http://localhost:3000/getComments',
                 type: 'GET',
@@ -722,7 +723,7 @@ clippy.Balloon.prototype = {
                                 <p style="margin:0">${comment.body}</p>
                             </div>
                         `).join('');
-                        addCommentButtonHTML = `<button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;
+                        addCommentButtonHTML = `<textarea placeholder="Add a comment..."></textarea><button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;
                         $('#comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML); 
                     } else {
                         console.error('Failed to retrieve comments:', data.error || data);
@@ -739,7 +740,6 @@ clippy.Balloon.prototype = {
         // Call getQuestions API when _getGameContent is called
         // Using synchronous AJAX to wait for the response before returning HTML
         let questionsHTML = ``;
-        let commentsHTML= ``;
         $.ajax({
             url: 'http://localhost:3000/getQuestions',
             type: 'GET',
@@ -762,53 +762,19 @@ clippy.Balloon.prototype = {
             }
         });
 
+    //     <section class="post">
+    //     <div class="byline">Question posted 2 hours ago</div>
+    //     <div class="content">
+    //     <p>Here are some more details on the question and some elaboration.</p>
+    //     </div>
+    // </section>
+
         return $(`
         <div class="clippy-balloon">
         <div class="clippy-content">
 
         <article id="comments-section" class="thread-view card">
             
-        </article>
-
-        <!-- Threads -->
-        <article class="`+this._name+`-question-one thread-view card" style="margin-top:1.5rem" hidden=true>
-            <header>
-                <h1>Question about something on IPortal?</h1>
-                <div class="meta">asked by <strong>administrator</strong> 3 replies </div>
-            </header>
-
-            <section class="post">
-                <div class="byline">Question posted 2 hours ago</div>
-                <div class="content">
-                <p>Here are some more details on the question and some elaboration.</p>
-                </div>
-            </section>
-
-            <section class="post">
-                <div class="byline">Answer by <strong>playerone</strong><div class='check'>&#x2713</div></div>
-                <div class="content">
-                <p>Here is an answer I have found to the question.</p>
-                </div>
-            </section>
-
-            <section class="post">
-                <div class="byline">Answer by <strong>huskiefan</strong></div>
-                <div class="content">
-                <p>I agree with the answer above, and I even have some additional thoughts.</p>
-                </div>
-            </section>
-
-            <section class="post">
-                <div class="byline">Comment by <strong>admin</strong></div>
-                <div class="content"><p>This is correct, and here is some other related information.</p></div>
-            </section>
-
-            <textarea placeholder="Add a comment..."></textarea>
-   
-        </article>
-
-
-
         <section id="`+this._name+`-home" style="position:absolute;">
         <div class="`+this._name+`-quests">
             <h2 class="header" style="margin-top:1rem">`+this._name+`'s Questions</h2>
