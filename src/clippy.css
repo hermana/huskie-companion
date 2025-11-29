@@ -196,3 +196,9 @@ textarea{
   width: 450px;
   overflow: scroll;
 }
+
+.back-btn{
+  float:left;
+  font-size: 4rem;
+  font-weight: bold;
+}

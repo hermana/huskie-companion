@@ -701,6 +701,13 @@ clippy.Balloon.prototype = {
             $("article."+name+"-question-one").show();
         });
 
+        $("#"+this._name+"-back-btn").click(function(){
+            console.log("back button clicked for"+name);
+            $("."+name+"-quests").show();
+            $("#comments-section").empty();
+        });
+
+
         $(".question").click(function(){
             let id = this.getAttribute("data-id");
             let body = this.getAttribute("data-body");
@@ -714,9 +721,14 @@ clippy.Balloon.prototype = {
                 success: function(data) {
                     if (data.success && data.comments) { 
                         // Save all comments to the comments object // id, user_id, question_id, body, created_at
+                        // Add a simple left-arrow back button to the header.
+                        // The button will have an id for possible event hooks.
                         threadHeaderHTML = `<header>
-                            <h1>${title}</h1>
+                            <h2 id="`+name+`-back-btn" class="back-btn">&#8592;</h2>
+                            <h1 style="margin:0;">${title}</h1>
                             </header>`;
+
+
                         commentsHTML = data.comments.map(comment => `
                             <div class="content">
                                 <div class="byline">Answer by <strong>${comment.user_id}</strong><div class='check'>&#x2713</div></div>
@@ -725,6 +737,12 @@ clippy.Balloon.prototype = {
                         `).join('');
                         addCommentButtonHTML = `<textarea placeholder="Add a comment..."></textarea><button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;
                         $('#comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML); 
+
+                        $("#"+name+"-back-btn").click(function(){
+                            console.log("from inside ajax call, back button clicked for"+name);
+                            $("."+name+"-quests").show();
+                            $("#comments-section").empty();
+                        });
                     } else {
                         console.error('Failed to retrieve comments:', data.error || data);
                     }
