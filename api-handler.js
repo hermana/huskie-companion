@@ -28,8 +28,6 @@ $(document).ready(function() {
   // Handle click on any button with class 'add-comment'
   $(document).on('click', '.add-comment', function(e) {
     e.preventDefault();
-    console.log("clicking add comment");
-    console.log(this)
     const questionId = $(this).data('questionid')
     //const questionId = $(this).data('questionId') || $('#comments-section').data('questionId');
     //const commentInput = $('#new-comment-body');

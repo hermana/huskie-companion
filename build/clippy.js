@@ -702,11 +702,9 @@ clippy.Balloon.prototype = {
         });
 
         $(".question").click(function(){
-            console.log("a question was clicked!");
             let id = this.getAttribute("data-id");
             let body = this.getAttribute("data-body");
             let title = this.getAttribute("data-title");
-
             $.ajax({
                 url: 'http://localhost:3000/getComments',
                 type: 'GET',
@@ -748,11 +746,10 @@ clippy.Balloon.prototype = {
             data: { user_id: 1 },
             async: false, // Make synchronous to wait for response
             success: function(data) {
-                console.log('getQuestions API called - Questions retrieved:', data);
                 if (data.success && data.questions) {
                     console.log('Found ' + data.questions.length + ' questions for user_id 1');
                     questionsHTML = data.questions.map(question => `
-                        <div class="card thread question" data-id=${question.id} data-body="${question.body} data-title=${question.title}">
+                        <div class="card thread question" data-id=${question.id} data-body="${question.body}" data-title="${question.title}">
                             <div>
                                 <h3 style="margin:0"><a>${question.title}</a></h3>
                             </div>
