@@ -6,25 +6,32 @@ function getUserIDFromName(name){
     switch(name){
         case "Rover":
             return 1;
+            break;
         case "Peedy":
             return 2;
+            break;
         case "Bonzi":
             return 3;
+            break;
         default:
             return 0;
+            break;
         }
 }
 
 function getUserNameFromID(id){
-    switch(id){
-        case "1":
+    switch(Number(id)){
+        case (1):
             return "Rover";
-        case "2":
+            break;
+        case (2):
             return "Peedy";
-        case "3":
+            break;
+        case (3):
             return "Bonzi";
+            break;
         default:
-            return "";
+            return "Anonymous User";
     }
 }
 /******
@@ -757,10 +764,12 @@ clippy.Balloon.prototype = {
                             <h1 style="margin:0;">${title}</h1>
                             </header>`;
 
-
-                        commentsHTML = data.comments.map(comment => `
+                        data.comments.forEach(comment => {
+                            comment.commenter = getUserNameFromID(comment.user_id);
+                          });  
+                        commentsHTML = data.comments.map(comment =>  `
                             <div class="content">
-                                <div class="byline">Answer by <strong>${comment.user_id}</strong><div class='check'>&#x2713</div></div>
+                                <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check'>&#x2713</div></div>
                                 <p style="margin:0">${comment.body}</p>
                             </div>
                         `).join('');
