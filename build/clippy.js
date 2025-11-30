@@ -784,12 +784,9 @@ clippy.Balloon.prototype = {
 
         })
 
-        $(".question").click(function(){
-            let id = this.getAttribute("data-id");
-            let body = this.getAttribute("data-body");
-            let title = this.getAttribute("data-title");
-            let user_id = this.getAttribute("data-user-id");
-            name = getUserNameFromID(user_id);
+        // Function to load/reload comments for a question
+        function loadCommentsForQuestion(id, title, user_id) {
+            let name = getUserNameFromID(user_id);
             $("."+name+"-quests").hide();
             $.ajax({
                 url: 'http://localhost:3000/getComments',
@@ -846,7 +843,11 @@ clippy.Balloon.prototype = {
                         `).join('');
                         addCommentButtonHTML = `<textarea placeholder="Add a comment..."></textarea><button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;
 
-                        $('#'+name+'-comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML); 
+                        $('#'+name+'-comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML);
+                        // Store question info for reloading comments later
+                        $('#'+name+'-comments-section').data('question-id', id);
+                        $('#'+name+'-comments-section').data('question-title', title);
+                        $('#'+name+'-comments-section').data('question-user-id', user_id); 
 
                         $("#"+name+"-back-btn").click(function(){
                             $("."+name+"-quests").show();
@@ -860,6 +861,17 @@ clippy.Balloon.prototype = {
                     console.error('Error calling getComments API:', error);
                 }
             });
+        }
+
+        // Make the function globally accessible for reloading comments
+        window.reloadCommentsForQuestion = loadCommentsForQuestion;
+
+        $(".question").click(function(){
+            let id = this.getAttribute("data-id");
+            let body = this.getAttribute("data-body");
+            let title = this.getAttribute("data-title");
+            let user_id = this.getAttribute("data-user-id");
+            loadCommentsForQuestion(id, title, user_id);
             })
     },
 

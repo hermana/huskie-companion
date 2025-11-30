@@ -53,6 +53,19 @@ $(document).ready(function() {
           console.log('Comment posted successfully:', response);
           // Clear the textarea after successful post
           textarea.val('');
+          // Reload comments to show the new comment
+          // Find the comments section that matches this question
+          const $commentsSection = $('[id$="-comments-section"]').filter(function() {
+            return $(this).data('question-id') == questionId;
+          });
+          if ($commentsSection.length > 0) {
+            const storedId = $commentsSection.data('question-id');
+            const storedTitle = $commentsSection.data('question-title');
+            const storedUserId = $commentsSection.data('question-user-id');
+            if (storedId && storedTitle && storedUserId && window.reloadCommentsForQuestion) {
+              window.reloadCommentsForQuestion(storedId, storedTitle, storedUserId);
+            }
+          }
         },
         error: function(xhr, status, error) {
           console.error('Error posting comment:', error);
