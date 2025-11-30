@@ -736,14 +736,13 @@ clippy.Balloon.prototype = {
         });
 
         $("#"+this._name+"-back-btn").click(function(){
-            console.log("back button was clicked");
             $("."+name+"-quests").show();
             $("#"+name+"-comments-section").empty();
         });
 
-        $(".upvote-btn").click(function(){
-            console.log("upvote button was clicked");
-            let comment_id = this.getAttribute("data-comment-id");
+        $(document).on('click', '.upvote-btn', function(){
+            let comment_id = $(this).data("comment-id");
+            let $btn = $(this);
             $.ajax({
                 url: 'http://localhost:3000/postUpvote',
                 type: 'POST',
@@ -755,8 +754,18 @@ clippy.Balloon.prototype = {
                 async: false,
                 success: function(data) {
                     if (data.success) {
-                        console.log('Upvote posted successfully for comment:', comment_id);
-                        // Optionally, update the upvote count UI here
+                        $btn.addClass('upvoted');
+                        $.ajax({
+                            url: 'http://localhost:3000/getUpvotes',
+                            type: 'GET',
+                            data: { comment_id: comment_id },
+                            async: false,
+                            success: function(upvoteData) {
+                                if (upvoteData.success && upvoteData.upvotes) {
+                                    $('#upvotes-' + comment_id).text(upvoteData.upvotes.length);
+                                }
+                            }
+                        });
                     } else {
                         console.warn('Failed to post upvote:', data.error);
                     }
@@ -765,6 +774,8 @@ clippy.Balloon.prototype = {
                     if (xhr.status === 409) {
                         // Upvote already exists for this user/comment (unique constraint)
                         console.warn('User has already upvoted this comment.');
+                        // Ensure button is marked as upvoted
+                        $btn.addClass('upvoted');
                     } else {
                         console.error('Error posting upvote:', error);
                     }
@@ -801,6 +812,7 @@ clippy.Balloon.prototype = {
                             //get the upvotes for that comment 
                           // Synchronously fetch upvotes for this comment
                             comment.upvotes = 0; // initialize
+                            comment.userHasUpvoted = false; // initialize
                             $.ajax({
                                 url: 'http://localhost:3000/getUpvotes',
                                 type: 'GET',
@@ -809,20 +821,25 @@ clippy.Balloon.prototype = {
                                 success: function(upvoteData) {
                                     if (upvoteData.success && upvoteData.upvotes) {
                                         comment.upvotes = upvoteData.upvotes.length;
+                                        // Check if current user has upvoted this comment
+                                        const currentUserId = clippy.Balloon.prototype.DEMO_PLAYER_ID;
+                                        comment.userHasUpvoted = upvoteData.upvotes.some(upvote => upvote.user_id === currentUserId);
                                     } else {
                                         comment.upvotes = 0;
+                                        comment.userHasUpvoted = false;
                                     }
                                 },
                                 error: function(xhr, status, error) {
                                     console.error(`Error getting upvotes for comment ${comment.id}:`, error);
                                     comment.upvotes = 0;
+                                    comment.userHasUpvoted = false;
                                 }
                             });
                           });  
                         commentsHTML = data.comments.map(comment =>  `
                             <div class="content">
                                 <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check'>&#x2713</div></div>
-                                <button class="upvote-btn" data-comment-id="${comment.id}" style="margin-right: 8px;">&#x25B2</button>
+                                <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}" style="margin-right: 8px;">&#x25B2</button>
                                 <span class="upvote-count" id="upvotes-${comment.id}">${comment.upvotes || 0}</span>
                                 <p style="margin:0">${comment.body}</p>
                             </div>

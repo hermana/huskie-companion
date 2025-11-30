@@ -202,3 +202,20 @@ textarea{
   font-size: 4rem;
   font-weight: bold;
 }
+
+.upvote-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s ease;
+}
+
+.upvote-btn:hover {
+  color: #333;
+}
+
+.upvote-btn.upvoted {
+  color: #22c55e;
+}
