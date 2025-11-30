@@ -55,7 +55,7 @@ app.get('/getQuestions', (req, res) => {
   }
 
   const stmt = db.prepare(`
-    SELECT id, user_id, accepted_response, title, body, created_at
+    SELECT id, user_id, title, body, created_at
     FROM questions
     WHERE user_id = ?
     ORDER BY created_at DESC
@@ -203,6 +203,50 @@ app.post('/postUpvote', (req, res) => {
     return res.status(500).json({
       success: false,
       error: 'Failed to add upvote'
+    });
+  }
+});
+
+// PUT endpoint for updateAcceptedResponse
+app.put('/updateAcceptedResponse', (req, res) => {
+  const { comment_id } = req.body || {};
+
+  if (!comment_id) {
+    return res.status(400).json({
+      success: false,
+      error: 'comment_id is required'
+    });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      UPDATE comments
+      SET accepted_response = 1
+      WHERE id = ?
+    `);
+
+    const info = stmt.run(parseInt(comment_id));
+
+    console.log(`updateAcceptedResponse was called for comment_id: ${comment_id}`);
+    console.log(`Rows affected: ${info.changes}`);
+
+    if (info.changes === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Comment not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      comment_id: parseInt(comment_id),
+      message: 'Accepted response updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating accepted response:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to update accepted response'
     });
   }
 });

@@ -856,7 +856,7 @@ clippy.Balloon.prototype = {
                                 <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check'>&#x2713</div></div>
                                 <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}" style="margin-right: 8px;">&#x25B2</button>
                                 <span class="upvote-count" id="upvotes-${comment.id}">${comment.upvotes || 0}</span>
-                                <p style="margin:0">${comment.body}</p>
+                                <p style="margin:0"><span class='check' style="font-size: 1.2rem; margin-right: 0.5rem;">&#x2713</span>${comment.body}</p>
                             </div>
                         `).join('');
                         addCommentButtonHTML = `<textarea placeholder="Add a comment..."></textarea><button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;

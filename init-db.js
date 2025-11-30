@@ -35,7 +35,6 @@ if (!dbExists) {
     CREATE TABLE questions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
-        accepted_response INTEGER DEFAULT 0,
         title TEXT NOT NULL,
         body TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -48,6 +47,7 @@ if (!dbExists) {
         user_id INTEGER NOT NULL,
         question_id INTEGER NOT NULL,
         body TEXT NOT NULL,
+        accepted_response INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id),
         FOREIGN KEY (question_id) REFERENCES questions(id)
