@@ -1,5 +1,32 @@
 var clippy = {};
 
+/***********Used for Demo Purposes**************/
+// also these should be switches 
+function getUserIDFromName(name){
+    switch(name){
+        case "Rover":
+            return 1;
+        case "Peedy":
+            return 2;
+        case "Bonzi":
+            return 3;
+        default:
+            return 0;
+        }
+}
+
+function getUserNameFromID(id){
+    switch(id){
+        case "1":
+            return "Rover";
+        case "2":
+            return "Peedy";
+        case "3":
+            return "Bonzi";
+        default:
+            return "";
+    }
+}
 /******
  *
  *
@@ -672,8 +699,8 @@ clippy.Balloon = function (targetEl, name) {
 clippy.Balloon.prototype = {
 
    WORD_SPEAK_TIME:320,
-   // CLOSE_BALLOON_DELAY:2000,
    CLOSE_BALLOON_DELAY:5000000, //For debugging for now, but will also need to be longer.
+   DEMO_PLAYER_ID:1,
 
     _setup:function (name) {
 
@@ -702,9 +729,8 @@ clippy.Balloon.prototype = {
         });
 
         $("#"+this._name+"-back-btn").click(function(){
-            console.log("back button clicked for"+name);
             $("."+name+"-quests").show();
-            $("#comments-section").empty();
+            $("#"+name+"-comments-section").empty();
         });
 
 
@@ -712,6 +738,8 @@ clippy.Balloon.prototype = {
             let id = this.getAttribute("data-id");
             let body = this.getAttribute("data-body");
             let title = this.getAttribute("data-title");
+            let user_id = this.getAttribute("data-user-id");
+            name = getUserNameFromID(user_id);
             $("."+name+"-quests").hide();
             $.ajax({
                 url: 'http://localhost:3000/getComments',
@@ -719,7 +747,8 @@ clippy.Balloon.prototype = {
                 data: { question_id: id },
                 async: false, // synchronous
                 success: function(data) {
-                    if (data.success && data.comments) { 
+                    if (data.success) {   //&& data.comments) { 
+                        name = getUserNameFromID(user_id);
                         // Save all comments to the comments object // id, user_id, question_id, body, created_at
                         // Add a simple left-arrow back button to the header.
                         // The button will have an id for possible event hooks.
@@ -736,12 +765,12 @@ clippy.Balloon.prototype = {
                             </div>
                         `).join('');
                         addCommentButtonHTML = `<textarea placeholder="Add a comment..."></textarea><button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;
-                        $('#comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML); 
+
+                        $('#'+name+'-comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML); 
 
                         $("#"+name+"-back-btn").click(function(){
-                            console.log("from inside ajax call, back button clicked for"+name);
                             $("."+name+"-quests").show();
-                            $("#comments-section").empty();
+                            $('#'+name+'-comments-section').empty();
                         });
                     } else {
                         console.error('Failed to retrieve comments:', data.error || data);
@@ -758,16 +787,16 @@ clippy.Balloon.prototype = {
         // Call getQuestions API when _getGameContent is called
         // Using synchronous AJAX to wait for the response before returning HTML
         let questionsHTML = ``;
+        let id = getUserIDFromName(this._name);
         $.ajax({
             url: 'http://localhost:3000/getQuestions',
             type: 'GET',
-            data: { user_id: 1 },
+            data: { user_id: id },
             async: false, // Make synchronous to wait for response
             success: function(data) {
                 if (data.success && data.questions) {
-                    console.log('Found ' + data.questions.length + ' questions for user_id 1');
                     questionsHTML = data.questions.map(question => `
-                        <div class="card thread question" data-id=${question.id} data-body="${question.body}" data-title="${question.title}">
+                        <div class="card thread question" data-id=${question.id} data-body="${question.body}" data-title="${question.title}" data-user-id="${question.user_id}">
                             <div>
                                 <h3 style="margin:0"><a>${question.title}</a></h3>
                             </div>
@@ -791,7 +820,7 @@ clippy.Balloon.prototype = {
         <div class="clippy-balloon">
         <div class="clippy-content">
 
-        <article id="comments-section" class="thread-view card">
+        <article id="`+this._name+`-comments-section" class="thread-view card"></article>
             
         <section id="`+this._name+`-home" style="position:absolute;">
         <div class="`+this._name+`-quests">
@@ -1006,8 +1035,7 @@ clippy.Balloon.prototype = {
     resume:function () {
         if (this._addWord)  this._addWord();
         this._hiding = window.setTimeout($.proxy(this._finishHideBalloon, this), this.CLOSE_BALLOON_DELAY);
-    }
-
+    },
 
 };
 
