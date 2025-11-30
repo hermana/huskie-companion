@@ -29,34 +29,36 @@ $(document).ready(function() {
   $(document).on('click', '.add-comment', function(e) {
     e.preventDefault();
     const questionId = $(this).data('questionid')
-    //const questionId = $(this).data('questionId') || $('#comments-section').data('questionId');
-    //const commentInput = $('#new-comment-body');
-    //const rawComment = commentInput.length ? (commentInput.val() || '') : '';
-    //const trimmedComment = rawComment.trim();
-    //const commentBody = trimmedComment.length > 0 ? trimmedComment : 'This is a placeholder comment.';
-    const commentBody = "Test Comment blah blah";
+    
+    // Get the textarea value - it's the previous sibling element
+    const textarea = $(this).prev('textarea');
+    const commentBody = textarea.length ? textarea.val().trim() : '';
 
     if (!questionId) {
       console.warn('No question_id found for add-comment button');
       return;
     }
 
-    $.ajax({
-      url: 'http://localhost:3000/postComment',
-      type: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({
-        user_id: 1,
-        question_id: questionId,
-        body: commentBody,
-      }),
-      success: function(response) {
-        console.log('Comment posted successfully:', response);
-      },
-      error: function(xhr, status, error) {
-        console.error('Error posting comment:', error);
-      }
-    });
+    if (commentBody){
+      $.ajax({
+        url: 'http://localhost:3000/postComment',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          user_id: 1,
+          question_id: questionId,
+          body: commentBody,
+        }),
+        success: function(response) {
+          console.log('Comment posted successfully:', response);
+          // Clear the textarea after successful post
+          textarea.val('');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error posting comment:', error);
+        }
+      });
+    }
   });
 });
 
