@@ -736,10 +736,42 @@ clippy.Balloon.prototype = {
         });
 
         $("#"+this._name+"-back-btn").click(function(){
+            console.log("back button was clicked");
             $("."+name+"-quests").show();
             $("#"+name+"-comments-section").empty();
         });
 
+        $(".upvote-btn").click(function(){
+            console.log("upvote button was clicked");
+            let comment_id = this.getAttribute("data-comment-id");
+            $.ajax({
+                url: 'http://localhost:3000/postUpvote',
+                type: 'POST',
+                data: JSON.stringify({
+                    user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID,
+                    comment_id: comment_id
+                }),
+                contentType: 'application/json',
+                async: false,
+                success: function(data) {
+                    if (data.success) {
+                        console.log('Upvote posted successfully for comment:', comment_id);
+                        // Optionally, update the upvote count UI here
+                    } else {
+                        console.warn('Failed to post upvote:', data.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 409) {
+                        // Upvote already exists for this user/comment (unique constraint)
+                        console.warn('User has already upvoted this comment.');
+                    } else {
+                        console.error('Error posting upvote:', error);
+                    }
+                }
+            });
+
+        })
 
         $(".question").click(function(){
             let id = this.getAttribute("data-id");
@@ -766,10 +798,32 @@ clippy.Balloon.prototype = {
 
                         data.comments.forEach(comment => {
                             comment.commenter = getUserNameFromID(comment.user_id);
+                            //get the upvotes for that comment 
+                          // Synchronously fetch upvotes for this comment
+                            comment.upvotes = 0; // initialize
+                            $.ajax({
+                                url: 'http://localhost:3000/getUpvotes',
+                                type: 'GET',
+                                data: { comment_id: comment.id },
+                                async: false, // synchronous
+                                success: function(upvoteData) {
+                                    if (upvoteData.success && upvoteData.upvotes) {
+                                        comment.upvotes = upvoteData.upvotes.length;
+                                    } else {
+                                        comment.upvotes = 0;
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(`Error getting upvotes for comment ${comment.id}:`, error);
+                                    comment.upvotes = 0;
+                                }
+                            });
                           });  
                         commentsHTML = data.comments.map(comment =>  `
                             <div class="content">
                                 <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check'>&#x2713</div></div>
+                                <button class="upvote-btn" data-comment-id="${comment.id}" style="margin-right: 8px;">&#x25B2</button>
+                                <span class="upvote-count" id="upvotes-${comment.id}">${comment.upvotes || 0}</span>
                                 <p style="margin:0">${comment.body}</p>
                             </div>
                         `).join('');

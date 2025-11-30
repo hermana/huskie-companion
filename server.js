@@ -131,6 +131,82 @@ app.post('/postComment', (req, res) => {
   });
 });
 
+// GET endpoint for getUpvotes
+app.get('/getUpvotes', (req, res) => {
+  const { comment_id } = req.query;
+  
+  if (!comment_id) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'comment_id query parameter is required' 
+    });
+  }
+
+  const stmt = db.prepare(`
+    SELECT id, user_id, item_type, item_id, created_at
+    FROM upvotes
+    WHERE item_type = 'comment' AND item_id = ?
+    ORDER BY created_at ASC
+  `);
+
+  const upvotes = stmt.all(parseInt(comment_id));
+  
+  console.log(`getUpvotes was called for comment_id: ${comment_id}`);
+  console.log(`Found ${upvotes.length} upvotes`);
+  
+  res.status(200).json({
+    success: true,
+    comment_id: parseInt(comment_id),
+    upvotes: upvotes
+  });
+});
+
+// POST endpoint for postUpvote
+app.post('/postUpvote', (req, res) => {
+  const { user_id, comment_id } = req.body || {};
+
+  if (!user_id || !comment_id) {
+    return res.status(400).json({
+      success: false,
+      error: 'user_id and comment_id are required'
+    });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO upvotes (user_id, item_type, item_id)
+      VALUES (?, 'comment', ?)
+    `);
+
+    const info = stmt.run(parseInt(user_id), parseInt(comment_id));
+
+    console.log(`postUpvote was called for comment_id: ${comment_id}, user_id: ${user_id}`);
+    console.log('Request body:', req.body);
+
+    res.status(200).json({
+      success: true,
+      id: info.lastInsertRowid,
+      message: 'Upvote added successfully'
+    });
+  } catch (error) {
+    // Handle unique constraint violation (user already upvoted this comment)
+    if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      console.log(`Upvote already exists for comment_id: ${comment_id}, user_id: ${user_id}`);
+      return res.status(409).json({
+        success: false,
+        error: 'User has already upvoted this comment'
+      });
+    }
+    
+    // Handle other errors
+    console.error('Error adding upvote:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to add upvote'
+    });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
