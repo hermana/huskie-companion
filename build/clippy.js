@@ -721,13 +721,29 @@ clippy.Balloon.prototype = {
         $("#"+this._name+"-huskie-btn").click(function(){
             $("."+name+"-quests").hide();
             $("."+name+"-huskie").show();
+            $("."+name+"-new-question").hide();
             $("article."+name+"-question-one").hide();
         });
 
         $("#"+this._name+"-quest-btn").click(function(){
             $("."+name+"-quests").show();
             $("."+name+"-huskie").hide();
+            $("."+name+"-new-question").hide();
             $("article."+name+"-question-one").hide();
+        });
+
+        $("#"+this._name+"-ask-question").click(function(e){
+            e.preventDefault();
+            $("."+name+"-quests").hide();
+            $("."+name+"-new-question").show();
+        });
+
+        $("#"+this._name+"-cancel-question").click(function(e){
+            e.preventDefault();
+            $("."+name+"-new-question").hide();
+            $("."+name+"-quests").show();
+            // Clear the form
+            $("#"+name+"-question-form")[0].reset();
         });
 
         $("#"+this._name+"-question-one").click(function(){
@@ -785,9 +801,10 @@ clippy.Balloon.prototype = {
         })
 
         // Function to load/reload comments for a question
-        function loadCommentsForQuestion(id, title, user_id) {
+        function loadCommentsForQuestion(id, title, body, user_id) {
             let name = getUserNameFromID(user_id);
             $("."+name+"-quests").hide();
+            $("."+name+"-new-question").hide();
             $.ajax({
                 url: 'http://localhost:3000/getComments',
                 type: 'GET',
@@ -802,6 +819,7 @@ clippy.Balloon.prototype = {
                         threadHeaderHTML = `<header>
                             <h2 id="`+name+`-back-btn" class="back-btn">&#8592;</h2>
                             <h1 style="margin:0;">${title}</h1>
+                            <p>${body}</p>
                             </header>`;
 
                         data.comments.forEach(comment => {
@@ -871,7 +889,7 @@ clippy.Balloon.prototype = {
             let body = this.getAttribute("data-body");
             let title = this.getAttribute("data-title");
             let user_id = this.getAttribute("data-user-id");
-            loadCommentsForQuestion(id, title, user_id);
+            loadCommentsForQuestion(id, title, body, user_id);
             })
     },
 
@@ -921,6 +939,19 @@ clippy.Balloon.prototype = {
                <div class="forum-questions">
                 ${questionsHTML}
                </div>
+        </div>
+        <div class="`+this._name+`-new-question" style="display:none;">
+            <h2 class="header" style="margin-top:1rem">Ask a Question</h2>
+            <form id="`+this._name+`-question-form">
+                <label for="`+this._name+`-question-title">Title:</label>
+                <input type="text" id="`+this._name+`-question-title" name="title" placeholder="Enter question title..." style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: var(--radius);" required>
+                <label for="`+this._name+`-question-body">Body:</label>
+                <textarea id="`+this._name+`-question-body" name="body" placeholder="Enter question details..." rows="6" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: var(--radius); resize: vertical;" required></textarea>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="ask-question" style="padding: 0.6rem 1.25rem;">Submit Question</button>
+                    <button type="button" id="`+this._name+`-cancel-question" class="btn" style="padding: 0.6rem 1.25rem;">Cancel</button>
+                </div>
+            </form>
         </div>
         <div class="`+this._name+`-huskie" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Huskie</h2>

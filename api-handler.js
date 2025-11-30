@@ -1,8 +1,17 @@
 // jQuery event handler for ask-question button
 $(document).ready(function() {
-  // Handle click on any button with class 'ask-question'
-  $(document).on('click', '.ask-question', function(e) {
+  // Handle form submission for question form
+  $(document).on('submit', 'form[id$="-question-form"]', function(e) {
     e.preventDefault();
+    
+    const $form = $(this);
+    const title = $form.find('input[name="title"]').val().trim();
+    const body = $form.find('textarea[name="body"]').val().trim();
+    
+    if (!title || !body) {
+      console.warn('Title and body are required');
+      return;
+    }
     
     // Call the /postQuestion API endpoint
     $.ajax({
@@ -10,14 +19,20 @@ $(document).ready(function() {
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({
-        user_id:1, //hardcoded for single user for now. 
-        //title:$(this).find('input[name="title"]').val(),
-        title: "Test Question",
-        //body:$(this).find('textarea[name="body"]').val(),
-        body: "blah blah blah",
+        user_id: 1, //hardcoded for single user for now. 
+        title: title,
+        body: body,
       }),
       success: function(response) {
         console.log('Question posted successfully:', response);
+        // Hide the form and show questions section
+        const formId = $form.attr('id');
+        const name = formId.replace('-question-form', '');
+        $('.' + name + '-new-question').hide();
+        $('.' + name + '-quests').show();
+        // Clear the form
+        $form[0].reset();
+        // TODO: Reload questions list to show the new question
       },
       error: function(xhr, status, error) {
         console.error('Error posting question:', error);
