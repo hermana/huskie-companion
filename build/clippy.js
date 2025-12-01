@@ -34,6 +34,15 @@ function getUserNameFromID(id){
             return "Anonymous User";
     }
 }
+
+function getUserXPFromBrowser(name){
+    // Get the balloon instance for the given name
+    if (window.clippyAgents && window.clippyAgents[name] && window.clippyAgents[name]._balloon) {
+        return window.clippyAgents[name]._balloon._xp || 0;
+    }
+    // Return 0 if agent/balloon not found
+    return 0;
+}
 /******
  *
  *
@@ -787,6 +796,8 @@ clippy.Balloon.prototype = {
    DEMO_PLAYER_ID:1,
 
     _setup:function (name) {
+        // Store reference to balloon instance for use in event handlers
+        var balloon = this;
 
         //this._balloon = $('<div class="clippy-balloon"><div class="clippy-tip"></div><div class="clippy-content"></div></div> ').hide();
         this._balloon = this._getGameContent();
@@ -836,6 +847,7 @@ clippy.Balloon.prototype = {
 
         $(document).on('click', '.upvote-btn', function(){
             let comment_id = $(this).data("comment-id");
+            let commenter = $(this).data("commenter");
             let $btn = $(this);
             $.ajax({
                 url: 'http://localhost:3000/postUpvote',
@@ -858,6 +870,7 @@ clippy.Balloon.prototype = {
                                 if (upvoteData.success && upvoteData.upvotes) {
                                     $('#upvotes-' + comment_id).text(upvoteData.upvotes.length);
                                 }
+                                balloon.calculateFriendXP(commenter, 'upvoted');
                             }
                         });
                     } else {
@@ -881,6 +894,7 @@ clippy.Balloon.prototype = {
         // Handle click on checkmark to accept a comment
         $(document).on('click', '.check[data-comment-id]', function(){
             let comment_id = $(this).data("comment-id");
+            let commenter = $(this).data("commenter");
             let $checkmark = $(this);
             
             // Don't do anything if already accepted
@@ -916,6 +930,7 @@ clippy.Balloon.prototype = {
                 }),
                 success: function(data) {
                     if (data.success) {
+                        balloon.calculateFriendXP(commenter, 'answer_accepted');
                         // Update all checkmarks: set clicked one to accepted, all others to not-accepted
                         $allCheckmarks.each(function() {
                             const $check = $(this);
@@ -990,7 +1005,7 @@ clippy.Balloon.prototype = {
                             const isAccepted = comment.accepted_response === 1;
                             return `
                             <div class="content">
-                                <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check ${isAccepted ? 'accepted' : 'not-accepted'}' data-comment-id="${comment.id}" style="cursor: pointer;">&#x2713</div></div>
+                                <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check ${isAccepted ? 'accepted' : 'not-accepted'}' data-comment-id="${comment.id}" data-commenter="${comment.commenter}" style="cursor: pointer;">&#x2713</div></div>
                                 <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}" style="margin-right: 8px;">&#x25B2</button>
                                 <span class="upvote-count" id="upvotes-${comment.id}">${comment.upvotes || 0}</span>
                                 <p style="margin:0"><span class='check' style="font-size: 1.2rem; margin-right: 0.5rem;">&#x2713</span>${comment.body}</p>
@@ -1299,23 +1314,22 @@ clippy.Balloon.prototype = {
     },
 
 
-    calculateXP:function(xp, userID, action){
+    calculateFriendXP:function(friendName, action){
+        let user_id = getUserIDFromName(friendName);
+        //FIXME: asynchronous calls could be an issue here.
+        let xp = getUserXPFromBrowser(friendName);
         switch(action){
             case 'upvoted':
-                //not for the current user
-                xp += log(xp)/8
+                if(xp>0){xp += Math.log(xp)/8} else{xp=50;}
                 break;
             case 'commented':
-                xp += log(xp)/2
-                break;
-            case 'asked_question':
-                xp += log(xp)
+                if(xp>0){xp += Math.log(xp)/2} else{xp=50;}
                 break;
             case 'answer_accepted':
-                //not for the current user
-                xp += log(xp)
+                if(xp>0){xp += Math.log(xp)} else{xp=50;}
+                break;
         }
-        updateXP(xp, userID);
+        this.updateFriendXP(xp, user_id);
     },
 
     /***
@@ -1323,7 +1337,7 @@ clippy.Balloon.prototype = {
      * @param {Number} xp 
      * @param {Number} userId
      */
-    updateXP:function (xp, userId) {
+    updateFriendXP:function (xp, userId) {
         $.ajax({
             url: 'http://localhost:3000/updateUserXP',
             type: 'PUT',
