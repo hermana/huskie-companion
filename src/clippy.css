@@ -63,19 +63,11 @@ body {
   max-width: 700px;
   margin: 2rem auto;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  height: 500px;
-  max-height: 500px;
 }
 
 .clippy-content {
   padding: 1.5rem;
-  flex: 1;
-  min-height: 0;
-  position: relative;
-  display: flex;
-  flex-direction: column;
+  max-height: 500px;
   overflow-y: auto;
 }
 
@@ -307,11 +299,6 @@ h4 {
   background: linear-gradient(to bottom, var(--bg), var(--surface));
   padding: 1.25rem;
   border-top: 1px solid var(--border);
-  flex-shrink: 0;
-  margin-top: auto;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
 }
 
 /* Buttons */
