@@ -392,6 +392,18 @@ clippy.Agent.prototype = {
     },
 
     _onClick:function () {
+       // Increment click counter when agent is clicked, but only if balloon was hidden
+       if (this._balloon && this._balloon._hidden) {
+           this._balloon._num_clicks = (this._balloon._num_clicks || 0) + 1;
+           // Update the display in the browser
+           const selector = '.' + this._balloon._name + '-huskie h3';
+           const $display = $(selector);
+           if ($display.length > 0) {
+               $display.text(this._balloon._num_clicks);
+           } else {
+               console.warn('Could not find element with selector:', selector);
+           }
+       }
        this.openGame();
     },
 
@@ -723,6 +735,7 @@ clippy.Balloon.prototype = {
             $("."+name+"-huskie").show();
             $("."+name+"-new-question").hide();
             $("article."+name+"-question-one").hide();
+            $('#'+name+'-comments-section').empty();
         });
 
         $("#"+this._name+"-quest-btn").click(function(){
@@ -1016,7 +1029,7 @@ clippy.Balloon.prototype = {
         <div class="`+this._name+`-huskie" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Huskie</h2>
             <h3>`+this._num_clicks+`</h3>
-        </div>
+        </div>           
         <div class="button-row">
             <button id="`+this._name+`-quest-btn" class="btn">Questions</button>
             <button id="`+this._name+`-huskie-btn" class="btn">My Huskie</button>
@@ -1117,7 +1130,7 @@ clippy.Balloon.prototype = {
     openGame:function (){
         if(this._hidden){
             this._hidden = false;
-            this._num_clicks = this._num_clicks+1;
+            // Click counting is now handled in Agent._onClick
             this.show();
             var c = this._content;
             c.height(500);
@@ -1134,7 +1147,8 @@ clippy.Balloon.prototype = {
 
 
     speak:function (complete, text, hold) {
-        this._num_clicks = this._num_clicks+1;
+        //this._num_clicks = this._num_clicks+1;
+        //console.log("the num clicks is "+this._num_clicks);
         this._hidden = false;
         this.show();
         var c = this._content;
