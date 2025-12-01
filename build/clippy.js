@@ -1260,9 +1260,9 @@ clippy.Balloon.prototype = {
         <div class="`+this._name+`-new-question" style="display:none;">
             <h2 class="header" style="margin-top:1rem">Ask a Question</h2>
             <form id="`+this._name+`-question-form">
-                <label for="`+this._name+`-question-title">Title:</label>
+                <label class="question-form" for="`+this._name+`-question-title">Title</label>
                 <input type="text" id="`+this._name+`-question-title" name="title" placeholder="Enter question title..." style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: var(--radius);" required>
-                <label for="`+this._name+`-question-body">Body:</label>
+                <label class="question-form" for="`+this._name+`-question-body">Body</label>
                 <textarea id="`+this._name+`-question-body" name="body" placeholder="Enter question details..." rows="6" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: var(--radius); resize: vertical;" required></textarea>
                 <div style="display: flex; gap: 0.5rem;">
                     <button type="submit" class="ask-question" style="padding: 0.6rem 1.25rem;">Submit Question</button>
