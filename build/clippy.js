@@ -812,6 +812,7 @@ clippy.Balloon.prototype = {
             $("."+name+"-new-question").hide();
             $("article."+name+"-question-one").hide();
             $('#'+name+'-comments-section').empty();
+            $('#'+name+'-comments-section').hide();
         });
 
         $("#"+this._name+"-quest-btn").click(function(){
@@ -819,18 +820,21 @@ clippy.Balloon.prototype = {
             $("."+name+"-huskie").hide();
             $("."+name+"-new-question").hide();
             $("article."+name+"-question-one").hide();
+            $('#'+name+'-comments-section').hide();
         });
 
         $("#"+this._name+"-ask-question").click(function(e){
             e.preventDefault();
             $("."+name+"-quests").hide();
             $("."+name+"-new-question").show();
+            $('#'+name+'-comments-section').hide();
         });
 
         $("#"+this._name+"-cancel-question").click(function(e){
             e.preventDefault();
             $("."+name+"-new-question").hide();
             $("."+name+"-quests").show();
+            $('#'+name+'-comments-section').hide();
             // Clear the form
             $("#"+name+"-question-form")[0].reset();
         });
@@ -843,6 +847,7 @@ clippy.Balloon.prototype = {
         $("#"+this._name+"-back-btn").click(function(){
             $("."+name+"-quests").show();
             $("#"+name+"-comments-section").empty();
+            $("#"+name+"-comments-section").hide();
         });
 
         $(document).on('click', '.upvote-btn', function(){
@@ -1015,6 +1020,7 @@ clippy.Balloon.prototype = {
                         addCommentButtonHTML = `<textarea placeholder="Add a comment..."></textarea><button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;
 
                         $('#'+name+'-comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML);
+                        $('#'+name+'-comments-section').show();
                         // Store question info for reloading comments later
                         $('#'+name+'-comments-section').data('question-id', id);
                         $('#'+name+'-comments-section').data('question-title', title);
@@ -1023,6 +1029,7 @@ clippy.Balloon.prototype = {
                         $("#"+name+"-back-btn").click(function(){
                             $("."+name+"-quests").show();
                             $('#'+name+'-comments-section').empty();
+                            $('#'+name+'-comments-section').hide();
                         });
                     } else {
                         console.error('Failed to retrieve comments:', data.error || data);
@@ -1083,9 +1090,9 @@ clippy.Balloon.prototype = {
         <div class="clippy-balloon">
         <div class="clippy-content">
 
-        <article id="`+this._name+`-comments-section" class="thread-view card"></article>
+        <article id="`+this._name+`-comments-section" class="thread-view card" style="display:none;"></article>
             
-        <section id="`+this._name+`-home" style="position:absolute;">
+        <section id="`+this._name+`-home">
         <div class="`+this._name+`-quests">
             <h2 class="header" style="margin-top:1rem">`+this._name+`'s Questions</h2>
                 <button id="`+this._name+`-ask-question" class="ask-question">Ask a Question</button>
