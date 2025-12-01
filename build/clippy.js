@@ -1012,9 +1012,9 @@ clippy.Balloon.prototype = {
                             return `
                             <div class="content">
                                 <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check ${isAccepted ? 'accepted' : 'not-accepted'}' data-comment-id="${comment.id}" data-commenter="${comment.commenter}" style="cursor: pointer;">&#x2713</div></div>
-                                <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}" style="margin-right: 8px;">&#x25B2</button>
+                                <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}">&#x25B2</button>
                                 <span class="upvote-count" id="upvotes-${comment.id}">${comment.upvotes || 0}</span>
-                                <p style="margin:0"><span class='check' style="font-size: 1.2rem; margin-right: 0.5rem;">&#x2713</span>${comment.body}</p>
+                                <p style="margin:0">${comment.body}</p>
                             </div>
                         `;
                         }).join('');
@@ -1097,8 +1097,10 @@ clippy.Balloon.prototype = {
             
         <section id="`+this._name+`-home" class="home-section">
         <div class="`+this._name+`-quests">
-            <h2 class="header" style="margin-top:1rem">`+this._name+`'s Questions</h2>
-                <button id="`+this._name+`-ask-question" class="ask-question">Ask a Question</button>
+            <div class="header-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; margin-bottom: 1.5rem;">
+                <h2 class="header" style="margin: 0;">`+this._name+`'s Questions</h2>
+                <button id="`+this._name+`-ask-question" class="ask-question" style="margin: 0;">Ask a Question</button>
+            </div>
                <div class="forum-questions">
                 ${questionsHTML}
                </div>

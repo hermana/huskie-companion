@@ -486,19 +486,39 @@ app.get('/getUserXP', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-// Graceful shutdown
-process.on('SIGINT', () => {
-  db.close((err) => {
-    if (err) {
-      console.error('Error closing database:', err.message);
-    } else {
+// Graceful shutdown function
+const gracefulShutdown = (signal) => {
+  console.log(`\n${signal} received. Shutting down gracefully...`);
+  
+  // Close the HTTP server
+  server.close(() => {
+    console.log('HTTP server closed');
+    
+    // Close the database connection
+    try {
+      db.close();
       console.log('Database connection closed');
+    } catch (err) {
+      console.error('Error closing database:', err.message);
     }
+    
     process.exit(0);
   });
-});
+  
+  // Force close after 10 seconds if graceful shutdown fails
+  setTimeout(() => {
+    console.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 10000);
+};
+
+// Handle SIGINT (Ctrl+C)
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle SIGTERM (termination signal)
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
