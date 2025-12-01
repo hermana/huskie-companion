@@ -817,6 +817,31 @@ clippy.Balloon.prototype = {
             $("article."+name+"-question-one").hide();
             $('#'+name+'-comments-section').empty();
             $('#'+name+'-comments-section').hide();
+            
+            // Refresh XP when Stats button is clicked
+            const userId = getUserIDFromName(name);
+            $.ajax({
+                url: 'http://localhost:3000/getUserXP',
+                type: 'GET',
+                data: { user_id: userId },
+                success: function(data) {
+                    if (data.success && data.xp !== undefined) {
+                        // Update balloon instance
+                        if (window.clippyAgents && window.clippyAgents[name] && window.clippyAgents[name]._balloon) {
+                            window.clippyAgents[name]._balloon._xp = data.xp;
+                        }
+                        // Update the display
+                        const selector = '.' + name + '-huskie .xp-value';
+                        const $display = $(selector);
+                        if ($display.length > 0) {
+                            $display.text(data.xp);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error getting user XP:', error);
+                }
+            });
         });
 
         $("#"+this._name+"-quest-btn").click(function(){
