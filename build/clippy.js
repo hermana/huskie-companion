@@ -403,6 +403,27 @@ clippy.Agent.prototype = {
            } else {
                console.warn('Could not find element with selector:', selector);
            }
+           
+           // Asynchronously update the user's num_clicks in the database
+           $.ajax({
+               url: 'http://localhost:3000/updateUserNumClicks',
+               type: 'PUT',
+               contentType: 'application/json',
+               data: JSON.stringify({
+                   user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID,
+                   num_clicks: this._balloon._num_clicks
+               }),
+               success: function(data) {
+                   if (data.success) {
+                       console.log('User num_clicks updated successfully:', data.num_clicks);
+                   } else {
+                       console.warn('Failed to update user num_clicks:', data.error);
+                   }
+               },
+               error: function(xhr, status, error) {
+                   console.error('Error updating user num_clicks:', error);
+               }
+           });
        }
        this.openGame();
     },
@@ -711,8 +732,30 @@ clippy.Balloon = function (targetEl, name) {
     this._targetEl = targetEl;
     this._name = name
     this._hidden = true;
-    this._num_clicks = 0;
+    this._num_clicks = 0; // Will be updated from database
     this._setup(name);
+    
+    // Fetch num_clicks from database asynchronously
+    $.ajax({
+        url: 'http://localhost:3000/getUserNumClicks',
+        type: 'GET',
+        data: { user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID },
+        success: (data) => {
+            if (data.success && data.num_clicks !== undefined) {
+                this._num_clicks = data.num_clicks;
+                // Update the display if it exists
+                const selector = '.' + this._name + '-huskie h3';
+                const $display = $(selector);
+                if ($display.length > 0) {
+                    $display.text(this._num_clicks);
+                }
+            }
+        },
+        error: (xhr, status, error) => {
+            console.error('Error getting user num_clicks:', error);
+            // Keep default value of 0 if fetch fails
+        }
+    });
 };
 
 clippy.Balloon.prototype = {

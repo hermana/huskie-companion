@@ -397,6 +397,50 @@ app.put('/updateUserNumClicks', (req, res) => {
   }
 });
 
+// GET endpoint for getUserNumClicks
+app.get('/getUserNumClicks', (req, res) => {
+  const { user_id } = req.query;
+  
+  if (!user_id) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'user_id query parameter is required' 
+    });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      SELECT num_clicks
+      FROM users
+      WHERE id = ?
+    `);
+
+    const user = stmt.get(parseInt(user_id));
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    console.log(`getUserNumClicks was called for user_id: ${user_id}`);
+    console.log(`Found num_clicks: ${user.num_clicks}`);
+
+    res.status(200).json({
+      success: true,
+      user_id: parseInt(user_id),
+      num_clicks: user.num_clicks || 0
+    });
+  } catch (error) {
+    console.error('Error getting user num_clicks:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to get user num_clicks'
+    });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
