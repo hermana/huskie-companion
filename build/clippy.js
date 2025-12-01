@@ -1025,6 +1025,7 @@ clippy.Balloon.prototype = {
                         // Store question info for reloading comments later
                         $('#'+name+'-comments-section').data('question-id', id);
                         $('#'+name+'-comments-section').data('question-title', title);
+                        $('#'+name+'-comments-section').data('question-body', body);
                         $('#'+name+'-comments-section').data('question-user-id', user_id); 
 
                         $("#"+name+"-back-btn").click(function(){
@@ -1042,8 +1043,159 @@ clippy.Balloon.prototype = {
             });
         }
 
-        // Make the function globally accessible for reloading comments
-        window.reloadCommentsForQuestion = loadCommentsForQuestion;
+        // Function to reload comments for a question (without hiding/showing sections)
+        function reloadCommentsForQuestion(questionId) {
+            // Find the comments section that matches this question
+            const $commentsSection = $('[id$="-comments-section"]').filter(function() {
+                return $(this).data('question-id') == questionId;
+            });
+            
+            if ($commentsSection.length === 0) {
+                console.warn('Comments section not found for question_id:', questionId);
+                return;
+            }
+            
+            const storedId = $commentsSection.data('question-id');
+            const storedTitle = $commentsSection.data('question-title');
+            const storedBody = $commentsSection.data('question-body') || '';
+            const storedUserId = $commentsSection.data('question-user-id');
+            const commentsSectionId = $commentsSection.attr('id');
+            const name = commentsSectionId ? commentsSectionId.replace('-comments-section', '') : null;
+            
+            if (!storedId || !storedTitle || !storedUserId || !name) {
+                console.warn('Missing data for reload:', { storedId, storedTitle, storedUserId, name });
+                return;
+            }
+            
+            // Fetch fresh comments
+            $.ajax({
+                url: 'http://localhost:3000/getComments',
+                type: 'GET',
+                data: { question_id: storedId },
+                success: function(data) {
+                    if (data.success && data.comments) {
+                        // Generate header HTML
+                        const threadHeaderHTML = `<header>
+                            <h2 id="`+name+`-back-btn" class="back-btn">&#8592;</h2>
+                            <h1 style="margin:0;">${storedTitle}</h1>
+                            <p>${storedBody}</p>
+                            </header>`;
+
+                        // Process comments and fetch upvotes
+                        data.comments.forEach(comment => {
+                            comment.commenter = getUserNameFromID(comment.user_id);
+                            comment.upvotes = 0;
+                            comment.userHasUpvoted = false;
+                            
+                            // Synchronously fetch upvotes for this comment
+                            $.ajax({
+                                url: 'http://localhost:3000/getUpvotes',
+                                type: 'GET',
+                                data: { comment_id: comment.id },
+                                async: false,
+                                success: function(upvoteData) {
+                                    if (upvoteData.success && upvoteData.upvotes) {
+                                        comment.upvotes = upvoteData.upvotes.length;
+                                        const currentUserId = clippy.Balloon.prototype.DEMO_PLAYER_ID;
+                                        comment.userHasUpvoted = upvoteData.upvotes.some(upvote => upvote.user_id === currentUserId);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(`Error getting upvotes for comment ${comment.id}:`, error);
+                                }
+                            });
+                        });
+                        
+                        // Generate comments HTML
+                        const commentsHTML = data.comments.map(comment => {
+                            const isAccepted = comment.accepted_response === 1;
+                            return `
+                            <div class="content">
+                                <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check ${isAccepted ? 'accepted' : 'not-accepted'}' data-comment-id="${comment.id}" data-commenter="${comment.commenter}" style="cursor: pointer;">&#x2713</div></div>
+                                <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}">&#x25B2</button>
+                                <span class="upvote-count" id="upvotes-${comment.id}">${comment.upvotes || 0}</span>
+                                <p style="margin:0">${comment.body}</p>
+                            </div>
+                        `;
+                        }).join('');
+                        
+                        const addCommentButtonHTML = `<textarea placeholder="Add a comment..."></textarea><button id="`+name+`-add-comment" class="add-comment" data-questionId="${storedId}">Add a Comment</button>`;
+
+                        // Update the comments section HTML directly
+                        $commentsSection.html(threadHeaderHTML + commentsHTML + addCommentButtonHTML);
+                        
+                        // Re-attach back button handler
+                        $("#"+name+"-back-btn").off('click').on('click', function(){
+                            $("."+name+"-quests").show();
+                            $commentsSection.empty();
+                            $commentsSection.hide();
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error reloading comments:', error);
+                }
+            });
+        }
+
+        // Make both functions globally accessible
+        window.loadCommentsForQuestion = loadCommentsForQuestion;
+        window.reloadCommentsForQuestion = reloadCommentsForQuestion;
+
+        // Function to reload questions for a user
+        function reloadQuestionsForUser(name) {
+            let id = getUserIDFromName(name);
+            $.ajax({
+                url: 'http://localhost:3000/getQuestions',
+                type: 'GET',
+                data: { user_id: id },
+                success: function(data) {
+                    if (data.success && data.questions) {
+                        // Update question count in balloon instance
+                        // Try to get balloon instance from window.clippyAgents
+                        let balloon = null;
+                        if (window.clippyAgents && window.clippyAgents[name]) {
+                            balloon = window.clippyAgents[name]._balloon;
+                        }
+                        
+                        if (balloon) {
+                            balloon._num_questions = data.questions.length;
+                            const $display = $('.' + name + '-huskie .num-questions-value');
+                            if ($display.length > 0) {
+                                $display.text(balloon._num_questions);
+                            }
+                        }
+                        
+                        // Generate questions HTML
+                        const questionsHTML = data.questions.map(question => `
+                            <div class="card thread question" data-id=${question.id} data-body="${question.body}" data-title="${question.title}" data-user-id="${question.user_id}">
+                                <div>
+                                    <h3><a>${question.title}</a></h3>
+                                </div>
+                            </div>
+                        `).join('');
+                        
+                        // Update the forum-questions div
+                        $('.' + name + '-quests .forum-questions').html(questionsHTML);
+                        
+                        // Re-attach click handlers for the new questions
+                        $('.' + name + '-quests .question').off('click').on('click', function(){
+                            let id = this.getAttribute("data-id");
+                            let body = this.getAttribute("data-body");
+                            let title = this.getAttribute("data-title");
+                            let user_id = this.getAttribute("data-user-id");
+                            loadCommentsForQuestion(id, title, body, user_id);
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error reloading questions:', error);
+                }
+            });
+        }
+
+        // Make the function globally accessible for reloading questions
+        window.reloadQuestionsForUser = reloadQuestionsForUser;
 
         $(".question").click(function(){
             let id = this.getAttribute("data-id");

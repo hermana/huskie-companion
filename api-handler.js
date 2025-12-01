@@ -94,21 +94,15 @@ $(document).ready(function() {
         const name = formId.replace('-question-form', '');
         calculateCurrentUserXP('asked_question', name);
         
-        // Update question count
-        const balloon = getBalloonByName(name);
-        if (balloon) {
-          balloon._num_questions = (balloon._num_questions || 0) + 1;
-          const $display = $('.' + name + '-huskie .num-questions-value');
-          if ($display.length > 0) {
-            $display.text(balloon._num_questions);
-          }
-        }
-        
         $('.' + name + '-new-question').hide();
         $('.' + name + '-quests').show();
         // Clear the form
         $form[0].reset();
-        // TODO: Reload questions list to show the new question
+        
+        // Reload questions list to show the new question
+        if (window.reloadQuestionsForUser) {
+          window.reloadQuestionsForUser(name);
+        }
       },
       error: function(xhr, status, error) {
         console.error('Error posting question:', error);
@@ -144,7 +138,6 @@ $(document).ready(function() {
           console.log('Comment posted successfully:', response);
           // Clear the textarea after successful post
           textarea.val('');
-          // Reload comments to show the new comment
           // Find the comments section that matches this question
           const $commentsSection = $('[id$="-comments-section"]').filter(function() {
             return $(this).data('question-id') == questionId;
@@ -155,13 +148,9 @@ $(document).ready(function() {
           if (name) {
             calculateCurrentUserXP('commented', name);
           }
-          if ($commentsSection.length > 0) {
-            const storedId = $commentsSection.data('question-id');
-            const storedTitle = $commentsSection.data('question-title');
-            const storedUserId = $commentsSection.data('question-user-id');
-            if (storedId && storedTitle && storedUserId && window.reloadCommentsForQuestion) {
-              window.reloadCommentsForQuestion(storedId, storedTitle, storedUserId);
-            }
+          // Reload comments to show the new comment (same approach as reloadQuestionsForUser)
+          if (window.reloadCommentsForQuestion) {
+            window.reloadCommentsForQuestion(questionId);
           }
         },
         error: function(xhr, status, error) {
