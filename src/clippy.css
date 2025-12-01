@@ -174,11 +174,18 @@ h4 {
 
 .card.thread.question {
   cursor: pointer;
+  grid-template-columns: 5px 1fr;
 }
 
 .card.thread.question:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+.card.thread.question > div {
+  grid-column: 1 / -1;
+  width: calc(100% - 5px);
+  margin-left: 5px;
 }
 
 /* Thread View */

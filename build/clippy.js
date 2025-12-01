@@ -1068,7 +1068,7 @@ clippy.Balloon.prototype = {
                     questionsHTML = data.questions.map(question => `
                         <div class="card thread question" data-id=${question.id} data-body="${question.body}" data-title="${question.title}" data-user-id="${question.user_id}">
                             <div>
-                                <h3 style="margin:0"><a>${question.title}</a></h3>
+                                <h3><a>${question.title}</a></h3>
                             </div>
                         </div>
                     `).join('');
