@@ -1123,11 +1123,12 @@ clippy.Balloon.prototype = {
             <h3>Number of clicks: <span class="num-clicks-value">`+this._num_clicks+`</span></h3>
             <h3>XP: <span class="xp-value">`+this._xp+`</span></h3>
             <h3>Questions asked: <span class="num-questions-value">`+this._num_questions+`</span></h3>
-        </div>           
+        </div>
+        </section>
+        </div>
         <div class="button-row">
             <button id="`+this._name+`-quest-btn" class="btn">Questions</button>
             <button id="`+this._name+`-huskie-btn" class="btn">Stats</button>
-        </div>
         </div>
         </div>
         `);
