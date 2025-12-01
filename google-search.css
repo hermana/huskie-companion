@@ -1,17 +1,52 @@
+/* Dark Mode Theme for Search Page */
+body {
+    background-color: #0f172a !important;
+    color: #e2e8f0 !important;
+}
 
-/* Google Custom Search */
+.container {
+    background-color: #0f172a !important;
+}
+
 .ct-content {
     margin-bottom: 80px;
     margin-top: 15px;
-}
-.gs-result a.gs-visibleUrl,
-.gs-result .gs-visibleUrl {
-	color: #00bff3 !important;
-}
-.ct-sidenav .ct-search input {
-	color: #fff;
+    color: #e2e8f0;
 }
 
+/* Google Custom Search Results */
+.gs-result a.gs-visibleUrl,
+.gs-result .gs-visibleUrl {
+	color: #60a5fa !important;
+}
+
+.gs-result .gs-title,
+.gs-result .gs-title * {
+	color: #93c5fd !important;
+}
+
+.gs-result .gs-snippet {
+	color: #cbd5e1 !important;
+}
+
+.gs-result {
+	background-color: #1e293b !important;
+	border: 1px solid #334155 !important;
+	border-radius: 8px;
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
+
+.gs-result:hover {
+	background-color: #334155 !important;
+	border-color: #475569 !important;
+}
+
+.ct-sidenav .ct-search input {
+	color: #e2e8f0 !important;
+}
+
+/* Search Form */
 #searchForm input {
 	height: 58px;
 	height: 5.8rem;
@@ -21,31 +56,146 @@
 	padding: 0 1.5rem;
 }
 
-#searchForm input {
-	border: 1px solid #acacac;
+#searchForm input[type="text"] {
+	border: 1px solid #475569;
 	width: 100%;
-	background: #fff;
+	background: #1e293b;
 	font-size: 19px;
 	font-size: 1.9rem;
-	color: #000;
+	color: #e2e8f0;
+	transition: all 0.2s ease;
+}
+
+#searchForm input[type="text"]:focus {
+	border-color: #60a5fa;
+	background: #1e293b;
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+#searchForm input[type="text"]::placeholder {
+	color: #94a3b8;
 }
 
 #searchForm input[type=submit] {
-	background-color: #00A7E8;
-	color:#fff;
-	border:none;
+	background-color: #3b82f6;
+	color: #fff;
+	border: none;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-weight: 600;
 }
 
-#output a{
-	font-weight:bold;
-	color: #00A7E8;
-}
-#output a.searchLink{
-	font-weight:bold;
-	color: #0079c2;
+#searchForm input[type=submit]:hover {
+	background-color: #2563eb;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
-#lnkPrev, #lnkNext{
-	font-weight:bold;
-	color: #0079c2;
+#searchForm input[type=submit]:active {
+	transform: translateY(0);
+}
+
+/* Search Results Output */
+#output {
+	color: #e2e8f0;
+}
+
+#output a {
+	font-weight: bold;
+	color: #60a5fa;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+#output a:hover {
+	color: #93c5fd;
+	text-decoration: underline;
+}
+
+#output a.searchLink {
+	font-weight: bold;
+	color: #60a5fa;
+}
+
+#output a.searchLink:hover {
+	color: #93c5fd;
+}
+
+/* Pagination Links */
+#lnkPrev, #lnkNext {
+	font-weight: bold;
+	color: #60a5fa;
+	text-decoration: none;
+	padding: 0.5rem 1rem;
+	background: #1e293b;
+	border: 1px solid #475569;
+	border-radius: 6px;
+	transition: all 0.2s ease;
+	display: inline-block;
+	margin-right: 0.5rem;
+}
+
+#lnkPrev:hover, #lnkNext:hover {
+	color: #93c5fd;
+	background: #334155;
+	border-color: #60a5fa;
+	transform: translateY(-1px);
+}
+
+.pager_controls {
+	color: #cbd5e1;
+	margin-top: 2rem;
+}
+
+.pager_controls p {
+	margin: 0;
+}
+
+/* Bootstrap Overrides for Dark Mode */
+.col-md-12, .col-md-10, .col-md-2, .col-sm-12 {
+	color: #e2e8f0;
+}
+
+.row {
+	margin: 0;
+}
+
+/* Google Search Container */
+.gsc-control-cse {
+	background-color: transparent !important;
+	border: none !important;
+}
+
+.gsc-control-cse .gsc-table-result {
+	color: #e2e8f0 !important;
+}
+
+.gsc-control-cse .gsc-result {
+	background-color: #1e293b !important;
+	border: 1px solid #334155 !important;
+}
+
+.gsc-control-cse .gsc-result:hover {
+	background-color: #334155 !important;
+}
+
+/* Additional dark mode adjustments */
+.search-page-search {
+	background: #1e293b !important;
+	color: #e2e8f0 !important;
+	border-color: #475569 !important;
+}
+
+.search-page-search-submit {
+	background-color: #3b82f6 !important;
+	color: #fff !important;
+}
+
+.search-page-search-submit:hover {
+	background-color: #2563eb !important;
+}
+
+#searchResult {
+	color: #e2e8f0;
 }
