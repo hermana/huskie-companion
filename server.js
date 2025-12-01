@@ -441,6 +441,50 @@ app.get('/getUserNumClicks', (req, res) => {
   }
 });
 
+// GET endpoint for getUserXP
+app.get('/getUserXP', (req, res) => {
+  const { user_id } = req.query;
+  
+  if (!user_id) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'user_id query parameter is required' 
+    });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      SELECT xp
+      FROM users
+      WHERE id = ?
+    `);
+
+    const user = stmt.get(parseInt(user_id));
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    console.log(`getUserXP was called for user_id: ${user_id}`);
+    console.log(`Found xp: ${user.xp}`);
+
+    res.status(200).json({
+      success: true,
+      user_id: parseInt(user_id),
+      xp: user.xp || 0
+    });
+  } catch (error) {
+    console.error('Error getting user XP:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to get user XP'
+    });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

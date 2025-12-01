@@ -733,9 +733,10 @@ clippy.Balloon = function (targetEl, name) {
     this._name = name
     this._hidden = true;
     this._num_clicks = 0; // Will be updated from database
+    this._xp = 0; 
     this._setup(name);
     
-    // Fetch num_clicks from database asynchronously
+    // Fetch num_clicks 
     $.ajax({
         url: 'http://localhost:3000/getUserNumClicks',
         type: 'GET',
@@ -753,6 +754,27 @@ clippy.Balloon = function (targetEl, name) {
         },
         error: (xhr, status, error) => {
             console.error('Error getting user num_clicks:', error);
+            // Keep default value of 0 if fetch fails
+        }
+    });
+    // Fetch xp from database
+    $.ajax({
+        url: 'http://localhost:3000/getUserXP',
+        type: 'GET',
+        data: { user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID },
+        success: (data) => {
+            if (data.success && data.xp !== undefined) {
+                this._xp = data.xp;
+                // Update the display if it exists
+                const selector = '.' + this._name + '-huskie h4';
+                const $display = $(selector);
+                if ($display.length > 0) {
+                    $display.text(this._xp);
+                }
+            }
+        },
+        error: (xhr, status, error) => {
+            console.error('Error getting user xp:', error);
             // Keep default value of 0 if fetch fails
         }
     });
@@ -1072,6 +1094,7 @@ clippy.Balloon.prototype = {
         <div class="`+this._name+`-huskie" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Huskie</h2>
             <h3>`+this._num_clicks+`</h3>
+            <h4>`+this._xp+`</h4>
         </div>           
         <div class="button-row">
             <button id="`+this._name+`-quest-btn" class="btn">Questions</button>
@@ -1275,6 +1298,53 @@ clippy.Balloon.prototype = {
         this._hiding = window.setTimeout($.proxy(this._finishHideBalloon, this), this.CLOSE_BALLOON_DELAY);
     },
 
+
+    calculateXP:function(xp, userID, action){
+        switch(action){
+            case 'upvoted':
+                //not for the current user
+                xp += log(xp)/8
+                break;
+            case 'commented':
+                xp += log(xp)/2
+                break;
+            case 'asked_question':
+                xp += log(xp)
+                break;
+            case 'answer_accepted':
+                //not for the current user
+                xp += log(xp)
+        }
+        updateXP(xp, userID);
+    },
+
+    /***
+     * Updates user XP by making an asynchronous AJAX call to the updateUserXP endpoint
+     * @param {Number} xp 
+     * @param {Number} userId
+     */
+    updateXP:function (xp, userId) {
+        $.ajax({
+            url: 'http://localhost:3000/updateUserXP',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                user_id: userId,
+                xp: xp
+            }),
+            success: function(data) {
+                if (data.success) {
+                    console.log('User XP updated successfully:', data.xp);
+                } else {
+                    console.warn('Failed to update user XP:', data.error);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error updating user XP:', error);
+            }
+        });
+    },
+
 };
 
 // clippy.BASE_PATH = '//s3.amazonaws.com/clippy.js/Agents/';
@@ -1302,6 +1372,11 @@ clippy.load = function (name, successCb, failCb) {
     // wrapper to the success callback
     var cb = function () {
         var a = new clippy.Agent(path, data,sounds, name);
+        // Store agent instance globally for access from other scripts
+        if (!window.clippyAgents) {
+            window.clippyAgents = {};
+        }
+        window.clippyAgents[name] = a;
         successCb(a);
     };
 
