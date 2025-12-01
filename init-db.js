@@ -26,6 +26,7 @@ if (!dbExists) {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         xp INTEGER DEFAULT 0,
+        num_clicks INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -77,76 +78,3 @@ if (!dbExists) {
 }
 
 module.exports = db;
-
-
-// const Database = require("better-sqlite3");
-// const fs = require("fs");
-// const path = require("path");
-
-// // Location of DB file
-// const DB_PATH = path.join(__dirname, "forum.db");
-
-// // Create database file if missing
-// if (!fs.existsSync(DB_PATH)) {
-//   console.log("Creating new SQLite database...");
-//   fs.writeFileSync(DB_PATH, "");
-// }
-
-// const db = new Database(DB_PATH);
-
-// // Wrap schema creation in a transaction
-// db.exec(`
-// PRAGMA foreign_keys = ON;
-
-// -- Users table
-// CREATE TABLE users (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     username TEXT NOT NULL UNIQUE,
-//     password_hash TEXT NOT NULL,
-//     xp INTEGER DEFAULT 0,
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-// );
-
-// -- Questions table
-// CREATE TABLE questions (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     user_id INTEGER NOT NULL,
-//     accepted_response INTEGER DEFAULT 0,
-//     title TEXT NOT NULL,
-//     body TEXT NOT NULL,
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-//     FOREIGN KEY (user_id) REFERENCES users(id)
-// );
-
-// -- Comments table
-// CREATE TABLE comments (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     user_id INTEGER NOT NULL,
-//     question_id INTEGER NOT NULL,
-//     body TEXT NOT NULL,
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-//     FOREIGN KEY (user_id) REFERENCES users(id),
-//     FOREIGN KEY (question_id) REFERENCES questions(id)
-// );
-
-// -- Upvotes table
-// -- Stores a single upvote per user per item.
-// -- "item_type" tells whether the upvote is for a question or a comment.
-// CREATE TABLE upvotes (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     user_id INTEGER NOT NULL,
-//     item_type TEXT CHECK(item_type IN ('question', 'comment')) NOT NULL,
-//     item_id INTEGER NOT NULL,
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-//     UNIQUE(user_id, item_type, item_id)
-// );
-
-// CREATE INDEX idx_questions_user ON questions(user_id);
-// CREATE INDEX idx_comments_question ON comments(question_id);
-// CREATE INDEX idx_comments_user ON comments(user_id);
-// CREATE INDEX idx_upvotes_item ON upvotes(item_type, item_id);
-// `);
-
-// console.log("Database initialized.");
-
-// module.exports = db;

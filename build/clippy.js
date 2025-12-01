@@ -1147,8 +1147,6 @@ clippy.Balloon.prototype = {
 
 
     speak:function (complete, text, hold) {
-        //this._num_clicks = this._num_clicks+1;
-        //console.log("the num clicks is "+this._num_clicks);
         this._hidden = false;
         this.show();
         var c = this._content;

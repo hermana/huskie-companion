@@ -289,6 +289,114 @@ app.put('/updateAcceptedResponse', (req, res) => {
   }
 });
 
+// PUT endpoint for updateUserXP
+app.put('/updateUserXP', (req, res) => {
+  const { user_id, xp } = req.body || {};
+
+  if (!user_id || xp === undefined) {
+    return res.status(400).json({
+      success: false,
+      error: 'user_id and xp are required'
+    });
+  }
+
+  // Validate that xp is a number
+  const xpNumber = parseInt(xp);
+  if (isNaN(xpNumber)) {
+    return res.status(400).json({
+      success: false,
+      error: 'xp must be a valid number'
+    });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      UPDATE users
+      SET xp = ?
+      WHERE id = ?
+    `);
+
+    const info = stmt.run(xpNumber, parseInt(user_id));
+
+    console.log(`updateUserXP was called for user_id: ${user_id}, xp: ${xpNumber}`);
+    console.log(`Rows affected: ${info.changes}`);
+
+    if (info.changes === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user_id: parseInt(user_id),
+      xp: xpNumber,
+      message: 'User XP updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating user XP:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to update user XP'
+    });
+  }
+});
+
+// PUT endpoint for updateUserNumClicks
+app.put('/updateUserNumClicks', (req, res) => {
+  const { user_id, num_clicks } = req.body || {};
+
+  if (!user_id || num_clicks === undefined) {
+    return res.status(400).json({
+      success: false,
+      error: 'user_id and num_clicks are required'
+    });
+  }
+
+  // Validate that num_clicks is a number
+  const numClicksNumber = parseInt(num_clicks);
+  if (isNaN(numClicksNumber)) {
+    return res.status(400).json({
+      success: false,
+      error: 'num_clicks must be a valid number'
+    });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      UPDATE users
+      SET num_clicks = ?
+      WHERE id = ?
+    `);
+
+    const info = stmt.run(numClicksNumber, parseInt(user_id));
+
+    console.log(`updateUserNumClicks was called for user_id: ${user_id}, num_clicks: ${numClicksNumber}`);
+    console.log(`Rows affected: ${info.changes}`);
+
+    if (info.changes === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user_id: parseInt(user_id),
+      num_clicks: numClicksNumber,
+      message: 'User num_clicks updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating user num_clicks:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to update user num_clicks'
+    });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
