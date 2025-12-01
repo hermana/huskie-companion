@@ -93,6 +93,17 @@ $(document).ready(function() {
         const formId = $form.attr('id');
         const name = formId.replace('-question-form', '');
         calculateCurrentUserXP('asked_question', name);
+        
+        // Update question count
+        const balloon = getBalloonByName(name);
+        if (balloon) {
+          balloon._num_questions = (balloon._num_questions || 0) + 1;
+          const $display = $('.' + name + '-huskie .num-questions-value');
+          if ($display.length > 0) {
+            $display.text(balloon._num_questions);
+          }
+        }
+        
         $('.' + name + '-new-question').hide();
         $('.' + name + '-quests').show();
         // Clear the form

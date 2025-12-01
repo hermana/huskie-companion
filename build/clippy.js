@@ -405,7 +405,7 @@ clippy.Agent.prototype = {
        if (this._balloon && this._balloon._hidden) {
            this._balloon._num_clicks = (this._balloon._num_clicks || 0) + 1;
            // Update the display in the browser
-           const selector = '.' + this._balloon._name + '-huskie h3';
+           const selector = '.' + this._balloon._name + '-huskie .num-clicks-value';
            const $display = $(selector);
            if ($display.length > 0) {
                $display.text(this._balloon._num_clicks);
@@ -743,6 +743,7 @@ clippy.Balloon = function (targetEl, name) {
     this._hidden = true;
     this._num_clicks = 0; // Will be updated from database
     this._xp = 0; 
+    this._num_questions = 0; // Will be updated when questions are fetched
     this._setup(name);
     
     // Fetch num_clicks 
@@ -775,7 +776,7 @@ clippy.Balloon = function (targetEl, name) {
             if (data.success && data.xp !== undefined) {
                 this._xp = data.xp;
                 // Update the display if it exists
-                const selector = '.' + this._name + '-huskie h4';
+                const selector = '.' + this._name + '-huskie .xp-value';
                 const $display = $(selector);
                 if ($display.length > 0) {
                     $display.text(this._xp);
@@ -1063,8 +1064,10 @@ clippy.Balloon.prototype = {
             type: 'GET',
             data: { user_id: id },
             async: false, // Make synchronous to wait for response
-            success: function(data) {
+            success: (data) => {
                 if (data.success && data.questions) {
+                    // Update the question count
+                    this._num_questions = data.questions.length;
                     questionsHTML = data.questions.map(question => `
                         <div class="card thread question" data-id=${question.id} data-body="${question.body}" data-title="${question.title}" data-user-id="${question.user_id}">
                             <div>
@@ -1115,8 +1118,9 @@ clippy.Balloon.prototype = {
         </div>
         <div class="`+this._name+`-huskie" hidden=true>
             <h2 class="header" style="margin-top:1rem">My Huskie</h2>
-            <h3>`+this._num_clicks+`</h3>
-            <h4>`+this._xp+`</h4>
+            <h3>Number of clicks: <span class="num-clicks-value">`+this._num_clicks+`</span></h3>
+            <h3>XP: <span class="xp-value">`+this._xp+`</span></h3>
+            <h3>Questions asked: <span class="num-questions-value">`+this._num_questions+`</span></h3>
         </div>           
         <div class="button-row">
             <button id="`+this._name+`-quest-btn" class="btn">Questions</button>
