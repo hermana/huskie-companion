@@ -405,6 +405,7 @@ clippy.Agent.prototype = {
        if (this._balloon && this._balloon._hidden) {
            this._balloon._num_clicks = (this._balloon._num_clicks || 0) + 1;
            // Update the display in the browser
+           console.log('onclick function for .' + this._balloon._name + '-huskie .num-clicks-value')
            const selector = '.' + this._balloon._name + '-huskie .num-clicks-value';
            const $display = $(selector);
            if ($display.length > 0) {
@@ -755,7 +756,7 @@ clippy.Balloon = function (targetEl, name) {
             if (data.success && data.num_clicks !== undefined) {
                 this._num_clicks = data.num_clicks;
                 // Update the display if it exists
-                const selector = '.' + this._name + '-huskie h3';
+                const selector = '.' + this._name + '-huskie .num-clicks-value';
                 const $display = $(selector);
                 if ($display.length > 0) {
                     $display.text(this._num_clicks);
