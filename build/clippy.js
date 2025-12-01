@@ -751,7 +751,8 @@ clippy.Balloon = function (targetEl, name) {
     $.ajax({
         url: 'http://localhost:3000/getUserNumClicks',
         type: 'GET',
-        data: { user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID },
+        //data: { user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID },
+        data: {user_id: getUserIDFromName(name)},
         success: (data) => {
             if (data.success && data.num_clicks !== undefined) {
                 this._num_clicks = data.num_clicks;
@@ -772,7 +773,8 @@ clippy.Balloon = function (targetEl, name) {
     $.ajax({
         url: 'http://localhost:3000/getUserXP',
         type: 'GET',
-        data: { user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID },
+        //data: { user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID },
+        data: {user_id: getUserIDFromName(name)},
         success: (data) => {
             if (data.success && data.xp !== undefined) {
                 this._xp = data.xp;
