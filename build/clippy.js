@@ -800,6 +800,63 @@ clippy.Balloon.prototype = {
 
         })
 
+        // Handle click on checkmark to accept a comment
+        $(document).on('click', '.check[data-comment-id]', function(){
+            let comment_id = $(this).data("comment-id");
+            let $checkmark = $(this);
+            
+            // Don't do anything if already accepted
+            if ($checkmark.hasClass('accepted')) {
+                return;
+            }
+            
+            // Find all checkmarks in the same comments section
+            // Find the comments section by looking for the parent article element
+            const $commentsSection = $checkmark.closest('article[id$="-comments-section"]');
+            const $allCheckmarks = $commentsSection.find('.check[data-comment-id]');
+            
+            // Check if any other comment is already accepted
+            let hasOtherAccepted = false;
+            $allCheckmarks.each(function() {
+                if ($(this).hasClass('accepted') && $(this).data('comment-id') !== comment_id) {
+                    hasOtherAccepted = true;
+                    return false; // break the loop
+                }
+            });
+            
+            // If another comment is already accepted, don't allow this action
+            if (hasOtherAccepted) {
+                return;
+            }
+            
+            $.ajax({
+                url: 'http://localhost:3000/updateAcceptedResponse',
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    comment_id: comment_id
+                }),
+                success: function(data) {
+                    if (data.success) {
+                        // Update all checkmarks: set clicked one to accepted, all others to not-accepted
+                        $allCheckmarks.each(function() {
+                            const $check = $(this);
+                            if ($check.data('comment-id') == comment_id) {
+                                $check.removeClass('not-accepted').addClass('accepted');
+                            } else {
+                                $check.removeClass('accepted').addClass('not-accepted');
+                            }
+                        });
+                    } else {
+                        console.warn('Failed to update accepted response:', data.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating accepted response:', error);
+                }
+            });
+        })
+
         // Function to load/reload comments for a question
         function loadCommentsForQuestion(id, title, body, user_id) {
             let name = getUserNameFromID(user_id);
@@ -851,14 +908,17 @@ clippy.Balloon.prototype = {
                                 }
                             });
                           });  
-                        commentsHTML = data.comments.map(comment =>  `
+                        commentsHTML = data.comments.map(comment =>  {
+                            const isAccepted = comment.accepted_response === 1;
+                            return `
                             <div class="content">
-                                <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check'>&#x2713</div></div>
+                                <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check ${isAccepted ? 'accepted' : 'not-accepted'}' data-comment-id="${comment.id}" style="cursor: pointer;">&#x2713</div></div>
                                 <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}" style="margin-right: 8px;">&#x25B2</button>
                                 <span class="upvote-count" id="upvotes-${comment.id}">${comment.upvotes || 0}</span>
                                 <p style="margin:0"><span class='check' style="font-size: 1.2rem; margin-right: 0.5rem;">&#x2713</span>${comment.body}</p>
                             </div>
-                        `).join('');
+                        `;
+                        }).join('');
                         addCommentButtonHTML = `<textarea placeholder="Add a comment..."></textarea><button id="`+name+`-add-comment" class="add-comment" data-questionId="${id}">Add a Comment</button>`;
 
                         $('#'+name+'-comments-section').html(threadHeaderHTML + commentsHTML + addCommentButtonHTML);

@@ -85,7 +85,7 @@ app.get('/getComments', (req, res) => {
   }
 
   const stmt = db.prepare(`
-    SELECT id, user_id, question_id, body, created_at
+    SELECT id, user_id, question_id, body, accepted_response, created_at
     FROM comments
     WHERE question_id = ?
     ORDER BY created_at ASC
@@ -219,27 +219,65 @@ app.put('/updateAcceptedResponse', (req, res) => {
   }
 
   try {
-    const stmt = db.prepare(`
-      UPDATE comments
-      SET accepted_response = 1
+    // First, get the question_id for this comment
+    const getQuestionStmt = db.prepare(`
+      SELECT question_id
+      FROM comments
       WHERE id = ?
     `);
-
-    const info = stmt.run(parseInt(comment_id));
-
-    console.log(`updateAcceptedResponse was called for comment_id: ${comment_id}`);
-    console.log(`Rows affected: ${info.changes}`);
-
-    if (info.changes === 0) {
+    
+    const comment = getQuestionStmt.get(parseInt(comment_id));
+    
+    if (!comment) {
       return res.status(404).json({
         success: false,
         error: 'Comment not found'
       });
     }
 
+    const question_id = comment.question_id;
+
+    // Check if any other comment for this question is already accepted
+    const checkAcceptedStmt = db.prepare(`
+      SELECT id
+      FROM comments
+      WHERE question_id = ? AND accepted_response = 1 AND id != ?
+    `);
+    
+    const existingAccepted = checkAcceptedStmt.get(question_id, parseInt(comment_id));
+    
+    // If another comment is already accepted, don't allow this update
+    if (existingAccepted) {
+      return res.status(409).json({
+        success: false,
+        error: 'Another comment is already marked as the accepted response for this question'
+      });
+    }
+
+    // Set all comments for this question to 0 (not accepted)
+    const clearStmt = db.prepare(`
+      UPDATE comments
+      SET accepted_response = 0
+      WHERE question_id = ?
+    `);
+    clearStmt.run(question_id);
+
+    // Then set the selected comment to 1 (accepted)
+    const acceptStmt = db.prepare(`
+      UPDATE comments
+      SET accepted_response = 1
+      WHERE id = ?
+    `);
+
+    const info = acceptStmt.run(parseInt(comment_id));
+
+    console.log(`updateAcceptedResponse was called for comment_id: ${comment_id}, question_id: ${question_id}`);
+    console.log(`Rows affected: ${info.changes}`);
+
     res.status(200).json({
       success: true,
       comment_id: parseInt(comment_id),
+      question_id: question_id,
       message: 'Accepted response updated successfully'
     });
   } catch (error) {
