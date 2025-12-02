@@ -402,38 +402,42 @@ clippy.Agent.prototype = {
 
     _onClick:function () {
        // Increment click counter when agent is clicked, but only if balloon was hidden
+       // and only if the user ID matches DEMO_PLAYER_ID
        if (this._balloon && this._balloon._hidden) {
-           this._balloon._num_clicks = (this._balloon._num_clicks || 0) + 1;
-           // Update the display in the browser
-           console.log('onclick function for .' + this._balloon._name + '-huskie .num-clicks-value')
-           const selector = '.' + this._balloon._name + '-huskie .num-clicks-value';
-           const $display = $(selector);
-           if ($display.length > 0) {
-               $display.text(this._balloon._num_clicks);
-           } else {
-               console.warn('Could not find element with selector:', selector);
-           }
-           
-           // Asynchronously update the user's num_clicks in the database
-           $.ajax({
-               url: 'http://localhost:3000/updateUserNumClicks',
-               type: 'PUT',
-               contentType: 'application/json',
-               data: JSON.stringify({
-                   user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID,
-                   num_clicks: this._balloon._num_clicks
-               }),
-               success: function(data) {
-                   if (data.success) {
-                       console.log('User num_clicks updated successfully:', data.num_clicks);
-                   } else {
-                       console.warn('Failed to update user num_clicks:', data.error);
-                   }
-               },
-               error: function(xhr, status, error) {
-                   console.error('Error updating user num_clicks:', error);
+           const userId = getUserIDFromName(this._balloon._name);
+           if (userId === clippy.Balloon.prototype.DEMO_PLAYER_ID) {
+               this._balloon._num_clicks = (this._balloon._num_clicks || 0) + 1;
+               // Update the display in the browser
+               console.log('onclick function for .' + this._balloon._name + '-huskie .num-clicks-value')
+               const selector = '.' + this._balloon._name + '-huskie .num-clicks-value';
+               const $display = $(selector);
+               if ($display.length > 0) {
+                   $display.text(this._balloon._num_clicks);
+               } else {
+                   console.warn('Could not find element with selector:', selector);
                }
-           });
+               
+               // Asynchronously update the user's num_clicks in the database
+               $.ajax({
+                   url: 'http://localhost:3000/updateUserNumClicks',
+                   type: 'PUT',
+                   contentType: 'application/json',
+                   data: JSON.stringify({
+                       user_id: clippy.Balloon.prototype.DEMO_PLAYER_ID,
+                       num_clicks: this._balloon._num_clicks
+                   }),
+                   success: function(data) {
+                       if (data.success) {
+                           console.log('User num_clicks updated successfully:', data.num_clicks);
+                       } else {
+                           console.warn('Failed to update user num_clicks:', data.error);
+                       }
+                   },
+                   error: function(xhr, status, error) {
+                       console.error('Error updating user num_clicks:', error);
+                   }
+               });
+           }
        }
        this.openGame();
     },
@@ -1239,6 +1243,7 @@ clippy.Balloon.prototype = {
         // Using synchronous AJAX to wait for the response before returning HTML
         let questionsHTML = ``;
         let id = getUserIDFromName(this._name);
+        const isDemoPlayer = id === clippy.Balloon.prototype.DEMO_PLAYER_ID;
         $.ajax({
             url: 'http://localhost:3000/getQuestions',
             type: 'GET',
@@ -1279,7 +1284,7 @@ clippy.Balloon.prototype = {
         <div class="`+this._name+`-quests">
             <div class="header-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; margin-bottom: 1.5rem;">
                 <h2 class="header" style="margin: 0;">`+this._name+`'s Questions</h2>
-                <button id="`+this._name+`-ask-question" class="ask-question" style="margin: 0;">Ask a Question</button>
+                <button id="`+this._name+`-ask-question" class="ask-question" style="margin: 0;`+(isDemoPlayer ? '' : ' display: none;')+`">Ask a Question</button>
             </div>
                <div class="forum-questions">
                 ${questionsHTML}

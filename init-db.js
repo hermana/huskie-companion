@@ -16,8 +16,8 @@ const db = new Database(DB_PATH);
 
 const demoData = [   
   `INSERT INTO users (username) VALUES ('Rover');`,
-  `INSERT INTO users (username) VALUES ('Peedy');`,
-  `INSERT INTO users (username) VALUES ('Bonzi');`,
+  `INSERT INTO users (username, num_clicks) VALUES ('Peedy', 5);`,
+  `INSERT INTO users (username, num_clicks) VALUES ('Bonzi', 15);`,
   `INSERT INTO questions (user_id, title, body) VALUES (2, 'Governance', 'Doing my course paper on Indigenous Governance and how it differs from our Provincial and Federal government. What are some good resources to start with?');`,
   `INSERT INTO questions (user_id, title, body) VALUES (3, 'Languages', 'I''m trying to find resources on what has been done in recent times (past five years) to preserve and help teach Indigenous languages. Has anybody heard about any initiatives on this?');`,
   `INSERT INTO questions (user_id, title, body) VALUES (2, 'Ed Major - Question', 'Hey, I''m and Education Major and going to be doing my internship next semester. I''m coming up with ideas on good ways to teach what we learned in the course. Has anyone come across any resources that would be good easy to understand or appropriate for a grade 5 class?');`,
@@ -39,7 +39,7 @@ if (!dbExists) {
     CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
-        xp INTEGER DEFAULT 0,
+        xp INTEGER DEFAULT 100,
         num_clicks INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
