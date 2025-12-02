@@ -25,7 +25,8 @@ const demoData = [
   `INSERT INTO comments (user_id, question_id, body) VALUES (3, 1, 'Try searching for Cheif Poundmaker. He brought up a lot of good info for me!');`,
   `INSERT INTO comments (user_id, question_id, body) VALUES (1, 2, 'When I was at UAlberta, there was a gamified Cree language learning app under development. I can reach out to my old contacts there and find out if it''s still going!');`,
   `INSERT INTO comments (user_id, question_id, body) VALUES (3, 3, 'Actually, you might want to email the program coordinator. They organize some outreach to local schools and could probably help you.');`,
-  `INSERT INTO comments (user_id, question_id, body) VALUES (1, 1, 'You should search up Louis Riel');`
+  `INSERT INTO comments (user_id, question_id, body) VALUES (1, 1, 'You should search up Louis Riel');`,
+  `INSERT INTO comments (user_id, question_id, body) VALUES (2, 4, 'Make sure you''re checking the dates, you want the most recent data.');`
 ]
 
 // Always enable foreign keys

@@ -52,10 +52,10 @@ function calculateCurrentUserXP(action, name){
   
   switch(action){
       case 'commented':
-        if(xp > 0){xp += Math.log(xp) / 2;} else{xp=100;}
+        if(xp > 0){xp += (Math.log(xp)*2);} else{xp=100;}
         break;
       case 'asked_question':
-        if(xp > 0){xp += Math.log(xp);} else{xp=100;}
+        if(xp > 0){xp += (Math.log(xp)*5);} else{xp=100;}
         break;
   }
   updateCurrentUserXP(xp);

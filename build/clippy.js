@@ -751,6 +751,26 @@ clippy.Balloon = function (targetEl, name) {
     this._num_questions = 0; // Will be updated when questions are fetched
     this._setup(name);
     
+    // For Demo only
+    if(name === 'Peedy') {
+        console.log('Peedy set num_clicks to 5');
+        this._num_clicks = 5;
+        const selector = '.' + this._name + '-huskie .num-clicks-value';
+        const $display = $(selector);
+        if ($display.length > 0) {
+            $display.text(this._num_clicks);
+        }
+        this._xp = 100;
+    } else if(name === 'Bonzi') {
+        this._num_clicks = 15;
+        const selector = '.' + this._name + '-huskie .num-clicks-value';
+        const $display = $(selector);
+        if ($display.length > 0) {
+            $display.text(this._num_clicks);
+        }
+        this._xp = 100;
+    } else if(name === 'Rover') {
+
     // Fetch num_clicks 
     $.ajax({
         url: 'http://localhost:3000/getUserNumClicks',
@@ -773,6 +793,7 @@ clippy.Balloon = function (targetEl, name) {
             // Keep default value of 0 if fetch fails
         }
     });
+}
     // Fetch xp from database
     $.ajax({
         url: 'http://localhost:3000/getUserXP',
@@ -795,6 +816,7 @@ clippy.Balloon = function (targetEl, name) {
             // Keep default value of 0 if fetch fails
         }
     });
+
 };
 
 clippy.Balloon.prototype = {
@@ -886,6 +908,7 @@ clippy.Balloon.prototype = {
         $(document).on('click', '.upvote-btn', function(){
             let comment_id = $(this).data("comment-id");
             let commenter = $(this).data("commenter");
+            balloon.calculateFriendXP(commenter, 'upvoted');
             let $btn = $(this);
             $.ajax({
                 url: 'http://localhost:3000/postUpvote',
@@ -897,6 +920,7 @@ clippy.Balloon.prototype = {
                 contentType: 'application/json',
                 async: false,
                 success: function(data) {
+                    console.log("update posted successfully!");
                     if (data.success) {
                         $btn.addClass('upvoted');
                         $.ajax({
@@ -1054,7 +1078,7 @@ clippy.Balloon.prototype = {
                             return `
                             <div class="content">
                                 <div class="byline">Answer by <strong>${comment.commenter}</strong><div class='check ${isAccepted ? 'accepted' : 'not-accepted'}' data-comment-id="${comment.id}" data-commenter="${comment.commenter}" style="cursor: pointer;">&#x2713</div></div>
-                                <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}">&#x25B2</button>
+                                <button class="upvote-btn ${comment.userHasUpvoted ? 'upvoted' : ''}" data-comment-id="${comment.id}" data-commenter="${comment.commenter}">&#x25B2</button>
                                 <span class="upvote-count" id="upvotes-${comment.id}">${comment.upvotes || 0}</span>
                                 <p style="margin:0">${comment.body}</p>
                             </div>
@@ -1526,18 +1550,19 @@ clippy.Balloon.prototype = {
 
 
     calculateFriendXP:function(friendName, action){
+        console.log("calculating xp for", friendName, "with action", action);
         let user_id = getUserIDFromName(friendName);
+        console.log("the user_id is", user_id);
         //FIXME: asynchronous calls could be an issue here.
         let xp = getUserXPFromBrowser(friendName);
         switch(action){
             case 'upvoted':
-                if(xp>0){xp += Math.log(xp)/8} else{xp=50;}
-                break;
-            case 'commented':
-                if(xp>0){xp += Math.log(xp)/2} else{xp=50;}
+                console.log("starting xp");
+                if(xp>0){xp += Math.log(xp)/2;} else{xp=50;}
+                console.log("ending xp", xp);
                 break;
             case 'answer_accepted':
-                if(xp>0){xp += Math.log(xp)} else{xp=50;}
+                if(xp>0){xp += (Math.log(xp)*5);} else{xp=50;}
                 break;
         }
         this.updateFriendXP(xp, user_id);
