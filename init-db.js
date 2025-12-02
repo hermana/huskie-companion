@@ -14,6 +14,20 @@ if (!dbExists) {
 
 const db = new Database(DB_PATH);
 
+const demoData = [   
+  `INSERT INTO users (username) VALUES ('Rover');`,
+  `INSERT INTO users (username) VALUES ('Peedy');`,
+  `INSERT INTO users (username) VALUES ('Bonzi');`,
+  `INSERT INTO questions (user_id, title, body) VALUES (2, 'Governance', 'Doing my course paper on Indigenous Governance and how it differs from our Provincial and Federal government. What are some good resources to start with?');`,
+  `INSERT INTO questions (user_id, title, body) VALUES (3, 'Languages', 'I''m trying to find resources on what has been done in recent times (past five years) to preserve and help teach Indigenous languages. Has anybody heard about any initiatives on this?');`,
+  `INSERT INTO questions (user_id, title, body) VALUES (2, 'Ed Major - Question', 'Hey, I''m and Education Major and going to be doing my internship next semester. I''m coming up with ideas on good ways to teach what we learned in the course. Has anyone come across any resources that would be good easy to understand or appropriate for a grade 5 class?');`,
+  `INSERT INTO questions (user_id, title, body) VALUES (1, 'Question about assignment', 'Hey, I''m trying to do the assignment on the Indian Act. When I search for Indian Act I see so much conflicting info- how are you guys filtering your search??');`,
+  `INSERT INTO comments (user_id, question_id, body) VALUES (3, 1, 'Try searching for Cheif Poundmaker. He brought up a lot of good info for me!');`,
+  `INSERT INTO comments (user_id, question_id, body) VALUES (1, 2, 'When I was at UAlberta, there was a gamified Cree language learning app under development. I can reach out to my old contacts there and find out if it''s still going!');`,
+  `INSERT INTO comments (user_id, question_id, body) VALUES (3, 3, 'Actually, you might want to email the program coordinator. They organize some outreach to local schools and could probably help you.');`,
+  `INSERT INTO comments (user_id, question_id, body) VALUES (1, 1, 'You should search up Louis Riel');`
+]
+
 // Always enable foreign keys
 db.exec("PRAGMA foreign_keys = ON;");
 
@@ -73,6 +87,13 @@ if (!dbExists) {
   `);
 
   console.log("Database initialized with schema.");
+  for (const statement of demoData) {
+    console.log("Adding demo data:", statement);
+    stmt = db.prepare(statement);
+    stmt.run();
+   // db.exec(statement);
+  }
+
 } else {
   console.log("Database already exists. Skipping schema creation.");
 }
