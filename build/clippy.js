@@ -935,14 +935,22 @@ clippy.Balloon.prototype = {
             let commenter = $(this).data("commenter");
             let $checkmark = $(this);
             
-            // Don't do anything if already accepted
-            if ($checkmark.hasClass('accepted')) {
-                return;
-            }
-            
             // Find all checkmarks in the same comments section
             // Find the comments section by looking for the parent article element
             const $commentsSection = $checkmark.closest('article[id$="-comments-section"]');
+            
+            // Only allow checkmark clicks if the checkmark is in this agent's comments section
+            // and this agent is the demo player
+            const commentsSectionId = $commentsSection.attr('id');
+            if (!commentsSectionId || !commentsSectionId.startsWith(name + '-')) {
+                return;
+            }
+            
+            const currentUserId = getUserIDFromName(name);
+            if (currentUserId !== clippy.Balloon.prototype.DEMO_PLAYER_ID) {
+                return;
+            }
+            
             const $allCheckmarks = $commentsSection.find('.check[data-comment-id]');
             
             // Check if any other comment is already accepted
@@ -1005,8 +1013,10 @@ clippy.Balloon.prototype = {
                         // Add a simple left-arrow back button to the header.
                         // The button will have an id for possible event hooks.
                         threadHeaderHTML = `<header>
-                            <h2 id="`+name+`-back-btn" class="back-btn">&#8592;</h2>
-                            <h1 style="margin:0;">${title}</h1>
+                            <div class="thread-header-title-row">
+                                <h2 id="`+name+`-back-btn" class="back-btn">&#8592;</h2>
+                                <h1 style="margin:0;">${title}</h1>
+                            </div>
                             <p>${body}</p>
                             </header>`;
 
@@ -1108,8 +1118,10 @@ clippy.Balloon.prototype = {
                     if (data.success && data.comments) {
                         // Generate header HTML
                         const threadHeaderHTML = `<header>
-                            <h2 id="`+name+`-back-btn" class="back-btn">&#8592;</h2>
-                            <h1 style="margin:0;">${storedTitle}</h1>
+                            <div class="thread-header-title-row">
+                                <h2 id="`+name+`-back-btn" class="back-btn">&#8592;</h2>
+                                <h1 style="margin:0;">${storedTitle}</h1>
+                            </div>
                             <p>${storedBody}</p>
                             </header>`;
 

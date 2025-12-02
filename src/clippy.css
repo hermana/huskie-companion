@@ -210,6 +210,16 @@ label.question-form{
   border-bottom: 2px solid var(--border);
 }
 
+.thread-header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.thread-header-title-row .back-btn {
+  margin: 0;
+}
+
 .thread-view header h1 {
   font-size: 1.75rem;
   font-weight: 700;
@@ -534,7 +544,7 @@ label.question-form{
 /* Back Button */
 .back-btn {
   float: left;
-  font-size: 5rem;
+  font-size: 3.5rem;
   font-weight: 700;
   color: var(--text);
   cursor: pointer;
